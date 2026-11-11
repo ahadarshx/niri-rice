@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Narrower, slightly taller compact launcher (Alt+Space), macOS-Spotlight style.
+# DMS tweaks: narrower, taller compact launcher (Alt+Space) and app-name-only bar title.
 # DMS has no setting for these, so this edits DMS's own file; DMS updates undo it.
 # Rerun after a DMS update:   pkexec dms-spotlight-tweak && systemctl --user restart dms
 # Undo: reinstall DMS:        sudo dnf reinstall dms
@@ -17,3 +17,21 @@ sed -i -E \
   "$f"
 
 grep -nE 'property real (spotlightWidth|pillHeight):' "$f"
+
+# Bar: show only the focused app's name (no "• window title"), like macOS.
+# Left-click the name still opens the window menu.
+fa=/usr/share/quickshell/dms/Modules/DBar/Widgets/FocusedApp.qml
+[[ -f $fa.orig ]] || cp -p "$fa" "$fa.orig"
+python3 -I - "$fa" <<'PY'
+import sys
+p = sys.argv[1]; s = open(p).read()
+marker = "// tweak: app name only"
+if marker not in s:
+    anchor = "id: titleText\n                        text: {\n"
+    if anchor not in s:
+        sys.exit("FocusedApp.qml layout changed; app-name tweak not applied")
+    s = s.replace(anchor, anchor + "                            " + marker + "\n"
+                  "                            if (!compactMode && appText.text) return \"\";\n", 1)
+    open(p, "w").write(s)
+print("app-name-only tweak:", "applied" if marker in open(p).read() else "missing")
+PY
