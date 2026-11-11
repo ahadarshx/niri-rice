@@ -66,7 +66,10 @@ Then:
 ```bash
 systemctl --user daemon-reload && systemctl --user restart dms
 code --install-extension danklinux.dms-theme          # VS Code colours
-flatpak override --user --filesystem=xdg-config/gtk-4.0:ro --filesystem=xdg-config/gtk-3.0:ro
+flatpak override --user --filesystem=xdg-config/gtk-4.0:ro --filesystem=xdg-config/gtk-3.0:ro --filesystem=xdg-data/icons:ro
+
+# cursor: Bibata Modern Classic from github.com/ful1e5/Bibata_Cursor, extracted to ~/.local/share/icons
+gsettings set org.gnome.desktop.interface cursor-theme Bibata-Modern-Classic
 ```
 
 In DMS Settings: **Wallpaper & colors → theme: dynamic**, turn on **Background blur** under Interface style, press **Apply GTK colors**, and turn on **wallpaper cycling** (hourly, random) for the rotating colours.
@@ -101,4 +104,4 @@ The essentials. The full list is in [docs/shortcuts.md](docs/shortcuts.md).
 
 ## Credits
 
-[niri](https://github.com/YaLTeR/niri) by YaLTeR, [DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell) by Avenge Media, [matugen](https://github.com/InioX/matugen), [adw-gtk3](https://github.com/lassekongo83/adw-gtk3), [Ghostty](https://ghostty.org), Google Sans Flex and DM Serif Display fonts
+[niri](https://github.com/YaLTeR/niri) by YaLTeR, [DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell) by Avenge Media, [matugen](https://github.com/InioX/matugen), [adw-gtk3](https://github.com/lassekongo83/adw-gtk3), [Ghostty](https://ghostty.org), [Bibata](https://github.com/ful1e5/Bibata_Cursor) cursors, Google Sans Flex and DM Serif Display fonts
