@@ -1,0 +1,11 @@
+# Your own matugen templates. DMS runs these too ("Run user templates" in
+# DMS Settings → Wallpaper & colors), every time your wallpaper colours change.
+[config]
+
+[templates.obsidian]
+input_path = '~/.config/matugen/templates/obsidian-dms.css'
+output_path = '~/Documents/obsidian/.obsidian/snippets/dms-material.css'
+
+[templates.btop]
+input_path = '~/.config/matugen/templates/btop.theme'
+output_path = '~/.config/btop/themes/dms.theme'

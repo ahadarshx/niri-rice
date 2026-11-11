@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# Shorten Fedora boot menu names:
+#   "Fedora Linux (7.3.3-300.fc45.x86_64) 45 (Workstation Edition)"  ->  "Fedora Linux · 7.3.3"
+#
+#   pkexec ~/.local/bin/fedora-short-boot-titles             apply (existing + future kernels)
+#   pkexec ~/.local/bin/fedora-short-boot-titles --restore   undo
+#
+# Existing entries: titles edited in /boot/loader/entries/*.conf (backup copied first).
+# Future kernels: a kernel-install hook (/etc/kernel/install.d/95-short-title.install)
+# shortens the title each time Fedora installs a new kernel.
+set -euo pipefail
+ENTRIES=/boot/loader/entries
+HOOK=/etc/kernel/install.d/95-short-title.install
+[[ $EUID -eq 0 ]] || { echo "Run with pkexec or sudo." >&2; exit 1; }
+
+if [[ ${1:-} == --restore ]]; then
+    b=$(ls -1dt /boot/loader/entries-backup-* 2>/dev/null | head -1) || true
+    [[ -n $b ]] || { echo "No backup found." >&2; exit 1; }
+    rm -f "$HOOK"
+    for f in "$b"/*.conf; do
+        n=$(basename "$f"); [[ -f $ENTRIES/$n ]] && sed -i "s|^title .*|$(grep -m1 '^title ' "$f" | sed 's/[|&]/\\&/g')|" "$ENTRIES/$n"
+    done
+    echo "Restored titles from $b and removed the hook."
+    exit 0
+fi
+
+short_title() {   # $1 = kernel version, e.g. 7.3.3-300.fc45.x86_64 or 0-rescue-<id>
+    if [[ $1 == *rescue* ]]; then echo "Fedora Linux · rescue"; else echo "Fedora Linux · ${1%%-*}"; fi
+}
+
+# 1. Hook for future kernels.
+cat > "$HOOK" <<'EOF'
+#!/usr/bin/sh
+# Shorten the boot menu title of newly installed kernels (see fedora-short-boot-titles).
+[ "$1" = "add" ] || exit 0
+KVER="$2"
+for f in /boot/loader/entries/*-"$KVER".conf; do
+    [ -f "$f" ] || continue
+    case "$KVER" in
+        *rescue*) t="Fedora Linux · rescue" ;;
+        *)        t="Fedora Linux · ${KVER%%-*}" ;;
+    esac
+    sed -i "s|^title .*|title $t|" "$f"
+done
+exit 0
+EOF
+chmod 755 "$HOOK"
+echo "== Installed hook $HOOK"
+
+# 2. Existing entries.
+backup=/boot/loader/entries-backup-$(date +%Y%m%d-%H%M%S)
+cp -a "$ENTRIES" "$backup"
+echo "== Backed up entries to $backup"
+for f in "$ENTRIES"/*.conf; do
+    ver=$(grep -m1 '^version ' "$f" | awk '{print $2}')
+    [[ -n $ver ]] || continue
+    old=$(grep -m1 '^title ' "$f" | cut -d' ' -f2-)
+    new=$(short_title "$ver")
+    sed -i "s|^title .*|title $new|" "$f"
+    printf '   %s\n     -> %s\n' "$old" "$new"
+done
+echo "== Done. Restart to see the shorter names."
+echo "   Undo: pkexec $0 --restore"

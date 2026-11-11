@@ -1,0 +1,127 @@
+// Personal look overrides. Loaded last in config.kdl so these win;
+// DMS never rewrites this file. Colours still come from dms/colors.kdl (wallpaper).
+
+layout {
+    gaps 10
+
+    // One thin, wallpaper-coloured border instead of border + focus ring.
+    focus-ring {
+        off
+    }
+    border {
+        on
+        width 1
+    }
+}
+
+// Blur whatever is behind any see-through part of a window
+// (terminal background, transparent apps). Opaque windows look unchanged.
+window-rule {
+    background-effect {
+        blur true
+        // Blur the windows behind, not just the wallpaper.
+        xray false
+    }
+}
+
+// DMS leaves the top bar and the Dynamic Island (notifications live there)
+// in "xray" mode, which blurs only the wallpaper. Make them blur what's behind too.
+// Costs a little more GPU; delete this block to go back.
+layer-rule {
+    match namespace="^dms:bar$"
+    match namespace="^dms:dankisland$"
+    background-effect {
+        xray false
+    }
+}
+
+// Unfocused windows fade slightly so the active one stands out.
+window-rule {
+    match is-active=false
+    opacity 0.94
+}
+
+// Floating terminal: Super+Shift+Return opens a centred, floating Ghostty
+// (a separate app-id so normal Super+T terminals still tile).
+window-rule {
+    match app-id="^com\\.ghostty\\.float$"
+    open-floating true
+    default-column-width { fixed 900; }
+    default-window-height { fixed 560; }
+}
+
+binds {
+    Mod+Shift+Return hotkey-overlay-title="Floating Terminal" { spawn "ghostty" "--class=com.ghostty.float"; }
+
+    // app shortcuts
+    Mod+B hotkey-overlay-title="Browser (Zen)" { spawn "zen-browser"; }
+    Mod+E hotkey-overlay-title="Files (Dux)" { spawn "dfiles" "open"; }
+    Mod+O hotkey-overlay-title="Obsidian" { spawn "flatpak" "run" "md.obsidian.Obsidian"; }
+    Mod+Grave hotkey-overlay-title="Drop-down terminal" { spawn-sh "$HOME/.local/bin/dropterm"; }
+    Mod+Shift+S hotkey-overlay-title="Screenshot and annotate" { spawn-sh "$HOME/.local/bin/shot-annotate"; }
+
+    // Super+1..4 go to the named workspaces (Shift sends the window there)
+    Mod+1 { focus-workspace "web"; }
+    Mod+Shift+1 { move-column-to-workspace "web"; }
+    Mod+2 { focus-workspace "code"; }
+    Mod+Shift+2 { move-column-to-workspace "code"; }
+    Mod+3 { focus-workspace "study"; }
+    Mod+Shift+3 { move-column-to-workspace "study"; }
+    Mod+4 { focus-workspace "media"; }
+    Mod+Shift+4 { move-column-to-workspace "media"; }
+}
+
+// VS Code can't draw a transparent background itself (Electron), so fade the
+// whole window slightly; the blur rule above shows the windows behind it.
+// Raise towards 1.0 if text feels too faint.
+window-rule {
+    match app-id="^(code|Code|code-url-handler|com\\.microsoft\\.VSCode)$"
+    opacity 0.88
+}
+
+// Obsidian: same subtle glass as VS Code (Electron can't draw a see-through
+// background itself); the blur rule shows the windows behind it.
+window-rule {
+    match app-id="^(obsidian|md\\.obsidian\\.Obsidian)$"
+    opacity 0.88
+}
+
+// ---------- Workspaces: every app has a home ----------
+// Super+1..4 always go to the same place. "scratch" holds the hidden drop-down terminal.
+workspace "web"
+workspace "code"
+workspace "study"
+workspace "media"
+workspace "scratch"
+
+window-rule {
+    match app-id="^zen$"
+    open-on-workspace "web"
+    default-column-width { proportion 0.66667; }
+}
+window-rule {
+    match app-id="^(code|Code|code-url-handler|com\\.microsoft\\.VSCode)$"
+    open-on-workspace "code"
+    default-column-width { proportion 0.66667; }
+}
+window-rule {
+    match app-id="^md\\.obsidian\\.Obsidian$"
+    open-on-workspace "study"
+    default-column-width { proportion 0.66667; }
+}
+window-rule {
+    match app-id="^(com\\.stremio\\.Stremio|io\\.github\\.rice\\.Tune)$"
+    open-on-workspace "media"
+}
+// terminals open narrow so two fit beside a browser or editor
+window-rule {
+    match app-id="^com\\.mitchellh\\.ghostty$"
+    default-column-width { proportion 0.33333; }
+}
+// drop-down terminal (Super+`)
+window-rule {
+    match app-id="^com\\.ghostty\\.dropdown$"
+    open-floating true
+    default-column-width { fixed 1100; }
+    default-window-height { fixed 600; }
+}

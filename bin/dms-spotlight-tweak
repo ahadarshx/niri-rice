@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Narrower, slightly taller compact launcher (Alt+Space), macOS-Spotlight style.
+# DMS has no setting for these, so this edits DMS's own file; DMS updates undo it.
+# Rerun after a DMS update:   pkexec dms-spotlight-tweak && systemctl --user restart dms
+# Undo: reinstall DMS:        sudo dnf reinstall dms
+set -euo pipefail
+WIDTH=600   # stock 720
+EXTRA=8     # px added to the search bar height (stock 48)
+
+f=/usr/share/quickshell/dms/Modals/DLauncherV2/Components/LauncherMetrics.qml
+[[ $EUID -eq 0 ]] || { echo "Run with pkexec or sudo." >&2; exit 1; }
+[[ -f $f.orig ]] || cp -p "$f" "$f.orig"
+
+sed -i -E \
+  -e "s|^(\s*readonly property real spotlightWidth:).*|\1 ${WIDTH}|" \
+  -e "s|^(\s*readonly property real pillHeight:).*|\1 Theme.fieldHeightLarge + ${EXTRA}|" \
+  "$f"
+
+grep -nE 'property real (spotlightWidth|pillHeight):' "$f"

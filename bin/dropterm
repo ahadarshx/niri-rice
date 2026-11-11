@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Drop-down terminal for niri: one floating Ghostty you show/hide with a key.
+# Hidden = parked on the "scratch" workspace, so the session keeps running.
+app="com.ghostty.dropdown"
+
+read -r id focused < <(niri msg --json windows | python3 -I -c '
+import json, sys
+for w in json.load(sys.stdin):
+    if w.get("app_id") == sys.argv[1]:
+        print(w["id"], int(bool(w.get("is_focused")))); break
+else:
+    print("", 0)' "$app")
+
+if [[ -z $id ]]; then
+    exec ghostty --class="$app"
+elif [[ $focused == 1 ]]; then
+    niri msg action move-window-to-workspace --window-id "$id" --focus false scratch
+else
+    ws=$(niri msg --json workspaces | python3 -I -c '
+import json, sys
+print(next(w["idx"] for w in json.load(sys.stdin) if w.get("is_focused")))')
+    niri msg action move-window-to-workspace --window-id "$id" --focus false "$ws"
+    niri msg action focus-window --id "$id"
+fi

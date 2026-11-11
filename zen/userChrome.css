@@ -1,0 +1,6 @@
+/* Colours follow the wallpaper: DMS regenerates ~/.config/dms/zen.css (linked here as dms-zen.css). */
+@import url("dms-zen.css");
+
+/* No window buttons, like the rest of the niri setup (close with Super+Q). */
+.titlebar-buttonbox-container,
+.titlebar-buttonbox { display: none !important; }

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Select a region, save it to ~/Pictures/Screenshots, then open it in Gradia to annotate.
+dir="$HOME/Pictures/Screenshots"
+name="annotate-$(date +%Y%m%d-%H%M%S).png"
+mkdir -p "$dir"
+dms screenshot region --dir "$dir" --filename "$name" --no-notify || exit 0
+[[ -f $dir/$name ]] && exec flatpak run be.alexandervanhee.gradia "$dir/$name"

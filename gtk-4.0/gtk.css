@@ -1,0 +1,11 @@
+@import url("dank-colors.css");
+
+/* Glass for GTK 4 / libadwaita apps: only backgrounds are see-through, text stays sharp.
+   niri blurs whatever is behind the window. Raise 0.62 towards 1 for more solid windows. */
+window.background:not(.popup):not(.tooltip) { background-color: alpha(@window_bg_color, 0.62); }
+
+/* let the window's glass show through the usual layers instead of stacking solid colour */
+headerbar, .top-bar, .bottom-bar, toolbarview, .toolbar,
+.view, textview > text, scrolledwindow > viewport,
+.navigation-sidebar, .content-pane, .sidebar-pane > toolbarview { background-color: transparent; box-shadow: none; }
+.sidebar-pane { background-color: alpha(@sidebar_bg_color, 0.35); }
