@@ -9,8 +9,6 @@ Pick a wallpaper and the whole system recolours itself: shell, terminal, editor,
 
 ![desktop](screenshots/desktop.jpg)
 
-<img src="screenshots/obsidian.jpg" width="100%">
-
 </div>
 
 ## What's in it
