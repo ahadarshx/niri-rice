@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Big pixel-block terminal clock. Scales to the window and redraws on resize.
+# Big pixel-block terminal clock. Scales to the window and stays centred when resized.
 # Usage: clock [-s] [-c COLOR] [-12]
 #   -s        show seconds
 #   -c N      colour: ANSI 1-7 (1 red 2 green 3 yellow 4 blue 5 magenta 6 cyan 7 white; default 4)
@@ -31,7 +31,7 @@ declare -A G=(
 
 draw() {
     local cols rows text px=0 s ch i r line sx glyph rowpix pix out=() top left date_line
-    cols=$(tput cols 2>/dev/null || echo 80); rows=$(tput lines 2>/dev/null || echo 24)
+    read -r rows cols < <(stty size </dev/tty 2>/dev/null || echo "24 80")   # real window size
     text=$(date +"$fmt")
     # width in pixels: glyph widths + 1-pixel gaps
     for (( i=0; i<${#text}; i++ )); do
@@ -72,9 +72,14 @@ cleanup() { tput cnorm; tput rmcup; exit 0; }
 trap cleanup INT TERM
 trap draw WINCH                 # redraw immediately when the window is resized
 tput smcup; tput civis          # alternate screen: your terminal is restored on exit
+last_size="" last_min=""
 while :; do
-    draw
-    if (( seconds )); then wait_s=1; else wait_s=$(( 60 - 10#$(date +%S) )); fi
-    # read -t returns early on a key press or a resize
-    if read -rsn1 -t "$wait_s" key; then [[ $key == q ]] && cleanup; fi
+    size="$(stty size </dev/tty 2>/dev/null)"; min="$(date +%H%M%S)"
+    # redraw when the window size changes (always centred) or the shown time changes
+    if (( seconds )); then now=$min; else now=${min:0:4}; fi
+    if [[ $size != "$last_size" || $now != "$last_min" ]]; then
+        draw; last_size=$size; last_min=$now
+    fi
+    # check once a second; a key press of q quits
+    if read -rsn1 -t 1 key; then [[ $key == q ]] && cleanup; fi
 done

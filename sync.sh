@@ -24,6 +24,7 @@ copy "$cfg/gtk-4.0/gtk.css"                 gtk-4.0/gtk.css
 copy "$cfg/matugen/config.toml"             matugen/config.toml
 copy "$cfg/matugen/templates/obsidian-dms.css" matugen/templates/obsidian-dms.css
 copy "$cfg/matugen/templates/btop.theme"    matugen/templates/btop.theme
+copy "$cfg/matugen/templates/cava.config"   matugen/templates/cava.config
 copy "$cfg/fastfetch/config.jsonc"          fastfetch/config.jsonc
 [[ -f $cfg/fastfetch/cat.png ]] && cp "$cfg/fastfetch/cat.png" "$repo/fastfetch/cat.png"
 

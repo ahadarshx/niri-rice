@@ -9,3 +9,7 @@ output_path = '~/Documents/obsidian/.obsidian/snippets/dms-material.css'
 [templates.btop]
 input_path = '~/.config/matugen/templates/btop.theme'
 output_path = '~/.config/btop/themes/dms.theme'
+
+[templates.cava]
+input_path = '~/.config/matugen/templates/cava.config'
+output_path = '~/.config/cava/config'

@@ -9,6 +9,8 @@ Pick a wallpaper and the whole system recolours itself: shell, terminal, editor,
 
 ![desktop](screenshots/desktop.jpg)
 
+<img src="screenshots/launcher.jpg" width="49%"> <img src="screenshots/wallpapers.jpg" width="49%">
+
 <img src="screenshots/obsidian.jpg" width="100%">
 
 </div>
@@ -32,6 +34,7 @@ Pick a wallpaper and the whole system recolours itself: shell, terminal, editor,
 | GTK 3 / 4 apps | adw-gtk3 patched by DMS, plus a glass stylesheet |
 | Obsidian | matugen template → CSS snippet (Material You callouts, dashboard cards, sidebar) |
 | btop | matugen template → `dms` theme |
+| cava | matugen template → gradient from primary, tertiary, secondary |
 | zsh prompt, fastfetch | terminal colour slots, so they follow Ghostty |
 
 ## Install
