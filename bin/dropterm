@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Drop-down terminal for niri: one floating Ghostty you show/hide with a key.
-# Hidden = parked on the "scratch" workspace, so the session keeps running.
+# It runs a tmux session called "drop": hiding detaches (the window closes, the
+# session keeps running), showing reattaches. No hidden workspace needed.
 app="com.ghostty.dropdown"
 
 read -r id focused < <(niri msg --json windows | python3 -I -c '
@@ -9,12 +10,13 @@ for w in json.load(sys.stdin):
     if w.get("app_id") == sys.argv[1]:
         print(w["id"], int(bool(w.get("is_focused")))); break
 else:
-    print("", 0)' "$app")
+    print("none", 0)' "$app")
 
-if [[ -z $id ]]; then
-    exec ghostty --class="$app"
+if [[ $id == none ]]; then
+    exec ghostty --class="$app" --title="drop-down" \
+        -e tmux new-session -A -s drop \; set-option -t drop status off
 elif [[ $focused == 1 ]]; then
-    niri msg action move-window-to-workspace --window-id "$id" --focus false scratch
+    tmux detach-client -s drop            # window closes, session lives on
 else
     ws=$(niri msg --json workspaces | python3 -I -c '
 import json, sys

@@ -6,5 +6,5 @@ autoload -Uz add-zsh-hook
 add-zsh-hook precmd vcs_info
 setopt PROMPT_SUBST
 
-PROMPT='%(?.%F{5}.%F{1})➜%f %F{default}%1~%f '
-RPROMPT='%F{8}${vcs_info_msg_0_}%D{%H:%M}%f'
+PROMPT='%(?.%F{6}.%F{1})➜%f %F{default}%1~%f '
+RPROMPT='%F{4}${vcs_info_msg_0_}%D{%H:%M}%f'

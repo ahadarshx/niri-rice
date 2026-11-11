@@ -10,7 +10,7 @@
   },
   "display": {
     "separator": "",
-    "color": { "keys": "35", "output": "39" },
+    "color": { "keys": "36", "output": "39" },
     "key": { "width": 14 }
   },
   "modules": [

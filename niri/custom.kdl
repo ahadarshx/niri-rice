@@ -87,12 +87,11 @@ window-rule {
 }
 
 // ---------- Workspaces: every app has a home ----------
-// Super+1..4 always go to the same place. "scratch" holds the hidden drop-down terminal.
+// Super+1..4 always go to the same place.
 workspace "web"
 workspace "code"
 workspace "study"
 workspace "media"
-workspace "scratch"
 
 window-rule {
     match app-id="^zen$"
