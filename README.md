@@ -8,6 +8,8 @@
 
 ![desktop](screenshots/desktop.jpg)
 
+![recolour](screenshots/recolour.jpg)
+
 ![music](screenshots/music.jpg)
 
 </div>
