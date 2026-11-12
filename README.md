@@ -8,7 +8,7 @@
 
 ![desktop](screenshots/desktop.jpg)
 
-![tune](screenshots/tune.jpg)
+![music](screenshots/music.jpg)
 
 </div>
 
