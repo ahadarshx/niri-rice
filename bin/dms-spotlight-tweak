@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# DMS tweaks: narrower, taller compact launcher (Alt+Space) and app-name-only bar title.
+# DMS tweaks: narrower, taller compact launcher (Alt+Space), app-name-only bar title, flat calendar.
 # DMS has no setting for these, so this edits DMS's own file; DMS updates undo it.
 # Rerun after a DMS update:   pkexec dms-spotlight-tweak && systemctl --user restart dms
 # Undo: reinstall DMS:        sudo dnf reinstall dms
@@ -34,4 +34,19 @@ if marker not in s:
                   "                            if (!compactMode && appText.text) return \"\";\n", 1)
     open(p, "w").write(s)
 print("app-name-only tweak:", "applied" if marker in open(p).read() else "missing")
+PY
+
+# Calendar: no filled day boxes, only the selected day keeps its highlight.
+mg=/usr/share/quickshell/dms/DCommon/Widgets/DMonthGrid.qml
+[[ -f $mg.orig ]] || cp -p "$mg" "$mg.orig"
+python3 -I - "$mg" <<'PY'
+import sys
+p = sys.argv[1]; s = open(p).read()
+old = "color: isSelected ? Style.primary : (inMonth ? Style.foregroundColor(Style.chipSurface, root.floatingWindow) : Style.withAlpha(Style.chipSurface, Style.stateLayerFocus))"
+new = "color: isSelected ? Style.primary : \"transparent\" // tweak: flat calendar"
+if new not in s:
+    if old not in s:
+        sys.exit("DMonthGrid.qml layout changed; flat calendar tweak not applied")
+    s = s.replace(old, new, 1); open(p, "w").write(s)
+print("flat calendar tweak: applied")
 PY

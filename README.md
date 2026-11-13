@@ -17,9 +17,10 @@
 ## What's in it
 
 - [niri](https://github.com/YaLTeR/niri) + [DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell): bar, dock, launcher, notifications, lock and login screen
-- one wallpaper palette across Ghostty, VS Code, Zen, GTK apps, Obsidian, btop, cava and the prompt
+- one wallpaper palette across Ghostty, VS Code, Zen, Firefox, GTK apps, Obsidian, btop, cava and the prompt
 - glass with real blur, no titlebars, thin borders
 - named workspaces, a drop-down terminal, hourly wallpaper rotation
+- an animated fetch in every new terminal and a cursor trail shader in Ghostty
 
 ## Install
 

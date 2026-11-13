@@ -86,6 +86,12 @@ window-rule {
     opacity 0.88
 }
 
+// Firefox: same subtle glass; colours come from its userChrome (DMS palette).
+window-rule {
+    match app-id="^(firefox|org\\.mozilla\\.firefox)$"
+    opacity 0.88
+}
+
 // ---------- Workspaces: every app has a home ----------
 // Super+1..4 always go to the same place.
 workspace "web"

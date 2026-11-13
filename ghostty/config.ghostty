@@ -15,3 +15,7 @@ window-padding-balance = true
 
 # Nerd Font (Cascadia Code with Nerd Font glyphs)
 font-family = "Cascadia Code NF"
+
+# Cursor trail: a thin streak follows the cursor and fades, in the cursor colour
+# (follows the wallpaper). Delete this line to turn it off.
+custom-shader = shaders/cursor_trail.glsl

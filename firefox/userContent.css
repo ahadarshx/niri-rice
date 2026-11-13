@@ -1,0 +1,11 @@
+/* New tab and Firefox's own pages use the wallpaper colours too. */
+@import url("dms-firefox.css");
+
+@-moz-document url("about:newtab"), url("about:home"), url("about:blank"), url("about:privatebrowsing") {
+  :root, body {
+    --newtab-background-color: var(--md-sys-color-surface-container-low) !important;
+    --newtab-background-color-secondary: var(--md-sys-color-surface-container) !important;
+    --newtab-text-primary-color: var(--md-sys-color-on-surface) !important;
+    background-color: var(--md-sys-color-surface-container-low) !important;
+  }
+}

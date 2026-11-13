@@ -1,0 +1,256 @@
+#!/usr/bin/env python3
+"""fastfetch with an animated logo: a futuristic orb in the wallpaper's colours.
+
+Usage: fetch [--time SECONDS] [--keys FILE]
+  default        animate until a key is pressed, then leave the last frame
+  --time S       stop by itself after S seconds
+  --style bat    a flapping pixel bat (needs ~/.local/share/fetch/bat.json)
+  --keys FILE    save the key that stopped it, so the shell can put it on the prompt
+
+The orb is drawn as real images (kitty graphics protocol, which Ghostty speaks).
+Colours come from DMS's palette (~/.cache/dms/dms-colors.json), so a new wallpaper
+gives a new orb. Frames are cached in ~/.cache/fetch-orb/. Other terminals get plain fastfetch.
+"""
+import base64, fcntl, hashlib, json, math, os, re, select, shutil, struct, subprocess, sys, termios, time, tty
+
+SECS = float(sys.argv[sys.argv.index("--time") + 1]) if "--time" in sys.argv else None   # None = loop
+KEYS = sys.argv[sys.argv.index("--keys") + 1] if "--keys" in sys.argv else None          # where to leave typed keys
+COLS, ROWS = 24, 11            # logo area in terminal cells
+PAD_L, PAD_R = 2, 3
+STYLE = sys.argv[sys.argv.index("--style") + 1] if "--style" in sys.argv else "orb"   # orb | bat
+FPS, NFRAMES = (10, 7) if STYLE == "bat" else (24, 192)   # bat: 7 frames, 0.7 s loop (original 0.4 s); orb: one 8 s turn
+VERSION = 2                    # bump to re-render cached frames after changing the look
+CACHE = os.path.expanduser("~/.cache/fetch-orb")
+COLOURS = os.path.expanduser("~/.cache/dms/dms-colors.json")
+
+
+def palette():
+    try:
+        d = json.load(open(COLOURS))
+        c = d["colors"][d.get("mode", "dark")]
+        keys = ("primary", "tertiary", "primary_container", "on_primary_container", "secondary")
+        return {k: c[k] for k in keys}
+    except Exception:
+        return {"primary": "#bec2ff", "tertiary": "#e7b9d5", "primary_container": "#3d4279",
+                "on_primary_container": "#e0e0ff", "secondary": "#c5c4dd"}
+
+
+def cell_px():
+    try:
+        rows, cols, xp, yp = struct.unpack("HHHH", fcntl.ioctl(sys.stdout.fileno(), termios.TIOCGWINSZ, b"\0" * 8))
+        if xp and yp:
+            return xp / cols, yp / rows
+    except OSError:
+        pass
+    return 10.0, 21.0
+
+
+# ---------------------------------------------------------------- rendering
+def render(path, k, W, H, pal):
+    """One frame of a rotating particle sphere: dots on a sphere, brightest at the rim,
+    fading from the tertiary colour at the top to the light primary at the bottom."""
+    import numpy as np
+    from PIL import Image, ImageFilter
+
+    def rgb(h):
+        h = h.lstrip("#")
+        return np.array([int(h[i:i + 2], 16) / 255 for i in (0, 2, 4)], np.float32)
+
+    TOP, MID, LOW = rgb(pal["tertiary"]), rgb(pal["primary"]), rgb(pal["on_primary_container"])
+    S = 2
+    w, h = W * S, H * S
+    m = min(w, h) / 2
+    tau = 2 * math.pi
+    ph = k / NFRAMES
+
+    rng = np.random.default_rng(7)
+    n_surf, n_in, n_pole = 4200, 500, 1400
+    v = rng.normal(size=(n_surf + n_in, 3)).astype(np.float32)
+    pole = rng.normal(size=(n_pole, 3)).astype(np.float32) * np.array([0.35, 1, 0.35], np.float32)
+    pole[:, 1] = np.abs(pole[:, 1]) + 1.2
+    pole[:, 1] *= np.where(rng.random(n_pole) < 0.5, -1, 1)          # bright caps at both poles
+    v = np.concatenate([v[:n_surf], pole, v[n_surf:]])
+    v /= np.linalg.norm(v, axis=1, keepdims=True)
+    n_surf += n_pole
+    rad = np.ones(n_surf + n_in, np.float32)
+    rad[n_surf:] = rng.uniform(0.15, 0.95, n_in) ** 0.5          # a few dots inside for depth
+    seed = rng.uniform(0, tau, n_surf + n_in).astype(np.float32)
+    # gentle ripple over the surface, seamless over the loop
+    rip = 1 + 0.008 * np.sin(3 * np.arctan2(v[:, 0], v[:, 2]) + 2 * v[:, 1] * math.pi + tau * ph * 2)
+    p3 = v * (rad * rip)[:, None]
+
+    a, tilt = tau * ph, 0.35                                      # one full turn per loop, tilted axis
+    x = p3[:, 0] * math.cos(a) + p3[:, 2] * math.sin(a)
+    z = -p3[:, 0] * math.sin(a) + p3[:, 2] * math.cos(a)
+    y = p3[:, 1] * math.cos(tilt) - z * math.sin(tilt)
+    z = p3[:, 1] * math.sin(tilt) + z * math.cos(tilt)
+
+    R = 0.74
+    px = (w / 2 + x * R * m).astype(np.int32)
+    py = (h / 2 + y * R * m).astype(np.int32)
+    ok = (px >= 0) & (px < w) & (py >= 0) & (py < h)
+
+    depth = np.clip((z + 1) / 2, 0, 1)                                          # 0 back .. 1 front
+    twinkle = 0.65 + 0.35 * np.sin(seed + tau * ph * 3)
+    rim = np.clip(np.sqrt(x * x + y * y), 0, 1) ** 3                # dark centre, bright edge
+    lum = (0.10 + 0.90 * depth ** 1.5) * (0.35 + 1.10 * rim) * twinkle
+    lum[n_surf:] *= 0.35                                           # inner dots stay faint
+    yy = np.clip((y + 1) / 2, 0, 1)[:, None]                      # 0 top .. 1 bottom
+    col = np.where(yy < 0.5, TOP * (1 - yy * 2) + MID * (yy * 2), MID * (2 - yy * 2) + LOW * (yy * 2 - 1))
+    col = col * 0.92 + 0.08                                        # lift towards white, like the reference
+
+    acc = np.zeros((h, w, 3), np.float32)
+    al = np.zeros((h, w), np.float32)
+    for dx, dy in ((0, 0), (1, 0), (0, 1), (1, 1)):               # 2x2 dots at supersampled size
+        qx, qy = np.clip(px + dx, 0, w - 1), np.clip(py + dy, 0, h - 1)
+        np.add.at(acc, (qy[ok], qx[ok]), col[ok] * lum[ok, None])
+        np.add.at(al, (qy[ok], qx[ok]), lum[ok])
+
+    glow = np.asarray(Image.fromarray(np.clip(al * 60, 0, 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(5 * S)),
+                      np.float32) / 255
+    A = np.clip(al, 0, 1)
+    C = np.clip(acc, 0, None)
+    C = C + MID * glow[..., None] * 0.25
+    A = np.clip(A + glow * 0.22, 0, 1)
+    out = np.clip(C / np.maximum(A[..., None], 1e-4), 0, 1)
+    img = np.dstack([out, A[..., None]])
+    im = Image.fromarray((img * 255).astype(np.uint8), "RGBA").resize((W, H), Image.LANCZOS)
+    tmp = f"{path}.{os.getpid()}.tmp"
+    im.save(tmp, "PNG")
+    os.replace(tmp, path)
+
+
+# ---------------------------------------------------------------- pixel bat
+BAT_DATA = os.path.expanduser("~/.local/share/fetch/bat.json")   # pixel frames (not part of this script)
+
+
+def render_bat(path, k, W, H, pal):
+    """One frame of the pixel bat, recoloured from the palette, scaled up with hard pixel edges."""
+    from PIL import Image
+    data = json.load(open(BAT_DATA))
+    n = data["size"]
+
+    def hexc(h):
+        h = h.lstrip("#")
+        return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4)) + (255,)
+
+    colours = {"#202020": hexc(pal["primary_container"]),    # body
+               "#54556b": hexc(pal["primary"]),              # outline and specks
+               "#fff": hexc(pal["on_primary_container"])}    # eyes
+    spr = Image.new("RGBA", (n, n), (0, 0, 0, 0))
+    px = spr.load()
+    for x, y, c in data["frames"][k % len(data["frames"])]:
+        if 0 <= x < n and 0 <= y < n:
+            px[x, y] = colours.get(c, colours["#54556b"])
+    scale = max(1, int(min(W / n, H / n)))
+    big = spr.resize((n * scale, n * scale), Image.NEAREST)
+    canvas = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    canvas.alpha_composite(big, ((W - big.width) // 2, (H - big.height) // 2))
+    tmp = f"{path}.{os.getpid()}.tmp"
+    canvas.save(tmp, "PNG")
+    os.replace(tmp, path)
+
+
+# ---------------------------------------------------------------- terminal
+def gr(**kv):
+    return "\033_G" + ",".join(f"{k}={v}" for k, v in kv.items()) + "\033\\"
+
+
+def prerender(cdir, W, H):
+    pal = palette()
+    for fi in range(NFRAMES):
+        path = os.path.join(cdir, f"{fi:03d}.png")
+        if not os.path.exists(path):
+            (render_bat if STYLE == "bat" else render)(path, fi, W, H, pal)
+
+
+def main():
+    if "--prerender" in sys.argv:
+        i = sys.argv.index("--prerender")
+        return prerender(sys.argv[i + 1], int(sys.argv[i + 2]), int(sys.argv[i + 3]))
+    if os.environ.get("TERM") not in ("xterm-ghostty", "xterm-kitty") or not sys.stdout.isatty():
+        os.execvp("fastfetch", ["fastfetch"])
+
+    global STYLE, FPS, NFRAMES
+    if STYLE == "bat" and not os.path.exists(BAT_DATA):   # no bat frames on this machine: show the orb
+        STYLE, FPS, NFRAMES = "orb", 24, 192
+    cw, ch = cell_px()
+    W, H = int(COLS * cw), int(ROWS * ch)
+    pal = palette()
+    key = hashlib.sha1(json.dumps([STYLE, pal, W, H, VERSION, NFRAMES]).encode()).hexdigest()[:12]
+    cdir = os.path.join(CACHE, key)
+    os.makedirs(cdir, exist_ok=True)
+    try:   # keep only the three newest palettes
+        olds = sorted((os.path.join(CACHE, d) for d in os.listdir(CACHE)), key=os.path.getmtime)
+        for d in olds[:-3]:
+            shutil.rmtree(d, ignore_errors=True)
+    except OSError:
+        pass
+
+    if len(os.listdir(cdir)) < NFRAMES:   # new palette: render the rest of the loop in the background
+        subprocess.Popen(["nice", "-n", "19", sys.executable, os.path.abspath(__file__), "--prerender", cdir, str(W), str(H), "--style", STYLE],
+                         stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+
+    info = subprocess.run(["fastfetch", "--logo", "none", "--pipe", "false"],
+                          capture_output=True, text=True).stdout.rstrip("\n").split("\n")
+    off = PAD_L + COLS + PAD_R
+    info = [re.sub(r"\033\[(\d+)G", lambda m: f"\033[{int(m.group(1)) + off}G", l) for l in info]
+    top = 0
+    n = max(ROWS + top, len(info))
+    w = sys.stdout.write
+    w("\033[?7l")  # no line wrap, so narrow windows don't shift the rows
+    w("\n".join(" " * off + (info[i] if i < len(info) else "") for i in range(n)) + "\n")
+    w("\033[?25l")
+
+    base = 7_000_000 + (os.getpid() % 100_000) * 100   # image ids for this run
+    sent, shown = set(), None
+    fd = sys.stdin.fileno()
+    old = termios.tcgetattr(fd) if sys.stdin.isatty() else None
+    try:
+        if old:
+            tty.setcbreak(fd)
+        start = time.time()
+        k = 0
+        while True:
+            fi = k % NFRAMES
+            path = os.path.join(cdir, f"{fi:03d}.png")
+            if not os.path.exists(path):
+                (render_bat if STYLE == "bat" else render)(path, fi, W, H, pal)
+            iid = base + fi
+            if fi not in sent:   # the terminal reads the PNG itself (local file)
+                w(gr(a="t", t="f", f=100, i=iid, q=2) .replace("\033\\", ";" + base64.b64encode(path.encode()).decode() + "\033\\"))
+                sent.add(fi)
+            w(f"\033[{n - top}A\r\033[{PAD_L}C" if PAD_L else f"\033[{n - top}A\r")
+            w(gr(a="p", i=iid, p=1, c=COLS, r=ROWS, C=1, z=-1, q=2))
+            if shown is not None and shown != iid:
+                w(gr(a="d", d="i", i=shown, p=1, q=2))
+            shown = iid
+            w(f"\r\033[{n - top}B")
+            sys.stdout.flush()
+            k += 1
+            if SECS is not None and time.time() - start >= SECS:
+                break
+            delay = max(0.0, start + k / FPS - time.time())
+            if old and select.select([fd], [], [], delay)[0]:
+                typed = os.read(fd, 64)   # any key stops it; hand printable keys to the shell
+                if KEYS:
+                    keep = "".join(ch for ch in typed.decode(errors="ignore") if ch.isprintable())
+                    with open(KEYS, "w") as fh:
+                        fh.write(keep)
+                break
+            elif not old:
+                time.sleep(delay)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        for fi in sent:   # free every frame except the one left on screen
+            if base + fi != shown:
+                w(gr(a="d", d="I", i=base + fi, q=2))
+        if old:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old)
+        w("\033[?25h\033[?7h")
+        sys.stdout.flush()
+
+
+if __name__ == "__main__":
+    main()

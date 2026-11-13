@@ -1,0 +1,54 @@
+/* Colours follow the wallpaper: DMS regenerates ~/.config/dms/firefox.css (linked here as dms-firefox.css).
+   Glass comes from niri (opacity rule + blur), like VS Code and Obsidian. */
+@import url("dms-firefox.css");
+
+:root {
+  --c-bg: var(--md-sys-color-surface-container-low);
+  --c-bar: var(--md-sys-color-surface-container);
+  --c-field: var(--md-sys-color-surface-container-high);
+  --c-text: var(--md-sys-color-on-surface);
+  --c-dim: var(--md-sys-color-on-surface-variant);
+  --c-accent: var(--md-sys-color-primary);
+  --c-line: var(--md-sys-color-outline-variant);
+
+  --lwt-accent-color: var(--c-bg) !important;
+  --lwt-text-color: var(--c-text) !important;
+  --toolbar-bgcolor: var(--c-bar) !important;
+  --toolbar-color: var(--c-text) !important;
+  --toolbarbutton-icon-fill: var(--c-text) !important;
+  --tab-selected-bgcolor: var(--c-field) !important;
+  --tab-selected-textcolor: var(--c-text) !important;
+  --tab-hover-background-color: color-mix(in srgb, var(--c-text) 6%, transparent) !important;
+  --toolbar-field-background-color: var(--c-field) !important;
+  --toolbar-field-focus-background-color: var(--c-field) !important;
+  --toolbar-field-color: var(--c-text) !important;
+  --toolbar-field-focus-color: var(--c-text) !important;
+  --toolbar-field-border-color: transparent !important;
+  --toolbar-field-focus-border-color: var(--c-accent) !important;
+  --urlbarView-highlight-background: var(--md-sys-color-secondary-container) !important;
+  --urlbarView-highlight-color: var(--md-sys-color-on-secondary-container) !important;
+  --arrowpanel-background: var(--c-bar) !important;
+  --arrowpanel-color: var(--c-text) !important;
+  --arrowpanel-border-color: var(--c-line) !important;
+  --panel-separator-color: var(--c-line) !important;
+  --sidebar-background-color: var(--c-bg) !important;
+  --sidebar-text-color: var(--c-text) !important;
+  --chrome-content-separator-color: transparent !important;
+  --focus-outline-color: var(--c-accent) !important;
+  --button-primary-bgcolor: var(--c-accent) !important;
+  --button-primary-color: var(--md-sys-color-on-primary) !important;
+  --identity-icon-color: var(--c-dim) !important;
+}
+
+#navigator-toolbox { background: var(--c-bg) !important; border-bottom: none !important; }
+#nav-bar, #PersonalToolbar { background: var(--c-bar) !important; }
+
+/* Selected tab: soft tint, no outline or shadow. */
+.tab-background { border-radius: 10px !important; box-shadow: none !important; outline: none !important; }
+.tabbrowser-tab[selected] .tab-background { background: var(--c-field) !important; }
+
+/* Context and app menus. */
+menupopup, panel { --panel-background: var(--c-bar) !important; --panel-color: var(--c-text) !important; }
+
+/* No window buttons, like the rest of the niri setup (close with Super+Q). */
+.titlebar-buttonbox-container, .titlebar-buttonbox { display: none !important; }
