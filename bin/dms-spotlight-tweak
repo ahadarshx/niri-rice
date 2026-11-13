@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# DMS tweaks: narrower, taller compact launcher (Alt+Space), app-name-only bar title, flat calendar.
+# DMS tweaks: narrower, taller compact launcher (Alt+Space), app-name-only bar title, flat calendar, centred workspace pill.
 # DMS has no setting for these, so this edits DMS's own file; DMS updates undo it.
 # Rerun after a DMS update:   pkexec dms-spotlight-tweak && systemctl --user restart dms
 # Undo: reinstall DMS:        sudo dnf reinstall dms
@@ -49,4 +49,22 @@ if new not in s:
         sys.exit("DMonthGrid.qml layout changed; flat calendar tweak not applied")
     s = s.replace(old, new, 1); open(p, "w").write(s)
 print("flat calendar tweak: applied")
+PY
+
+# Bar: centre the workspace pill on whole pixels (stock centring lands on x.5 and rounds 1px right).
+wsf=/usr/share/quickshell/dms/Modules/DBar/Widgets/WorkspaceSwitcher.qml
+[[ -f $wsf.orig ]] || cp -p "$wsf" "$wsf.orig"
+python3 -I - "$wsf" <<'PY'
+import sys
+p = sys.argv[1]; s = open(p).read()
+old = "        id: workspaceRow\n\n        anchors.centerIn: root.visualContent\n"
+new = ("        id: workspaceRow\n\n"
+       "        // tweak: whole-pixel centring\n"
+       "        x: Math.floor(root.visualContent.x + (root.visualContent.width - width) / 2)\n"
+       "        y: Math.floor(root.visualContent.y + (root.visualContent.height - height) / 2)\n")
+if "// tweak: whole-pixel centring" not in s:
+    if old not in s:
+        sys.exit("WorkspaceSwitcher.qml layout changed; centring tweak not applied")
+    s = s.replace(old, new, 1); open(p, "w").write(s)
+print("workspace centring tweak: applied")
 PY
