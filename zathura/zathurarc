@@ -1,0 +1,43 @@
+# zathura: minimal reader for pdf, epub, mobi, fb2, djvu, cbz
+# colours follow the wallpaper (DMS / matugen writes dms-colors)
+include dms-colors
+
+# ---- layout: just the page ----
+set guioptions              ""          # no statusbar, no scrollbars; ':' still opens the command line
+set font                    "General Sans Medium 11"
+set statusbar-h-padding     18
+set statusbar-v-padding     10
+set page-v-padding          12
+set page-h-padding          12
+set adjust-open             "best-fit"
+set zoom-center             true
+set vertical-center         true
+set render-loading          false
+set window-title-basename   true
+set window-title-page       true
+set statusbar-basename      true
+set statusbar-home-tilde    true
+set statusbar-page-percent  true
+
+# ---- reading ----
+set recolor                 true        # wallpaper colours on the page; Ctrl+R for the original
+set recolor-keephue         true        # figures keep their colours
+set recolor-reverse-video   true        # images stay natural
+set scroll-page-aware       true
+set scroll-full-overlap     0.05
+set scroll-step             90
+set zoom-step               8
+set incremental-search      true
+set selection-clipboard     clipboard
+set selection-notification  false
+set dbus-raise-window       true
+
+# ---- motion: smooth, eased scrolling on the keys ----
+map j       scroll smooth-down
+map k       scroll smooth-up
+map <Down>  scroll smooth-down
+map <Up>    scroll smooth-up
+
+# toggle the statusbar when you want page numbers
+map b       set "guioptions s"
+map B       set "guioptions \"\""

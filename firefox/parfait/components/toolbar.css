@@ -1,0 +1,342 @@
+/*
+  Parfait - toolbar.css
+  https://github.com/reizumii/parfait
+*/
+
+/* toolbar buttons */
+toolbar .toolbarbutton-1,
+findbar toolbarbutton {
+  border-radius: var(--pf-border-radius-sm);
+}
+toolbar .toolbarbutton-1:not(#PlacesChevron, .toolbarbutton-combined-buttons-dropmarker) {
+  min-width: var(--pf-toolbarbutton-width);
+  min-height: var(--pf-toolbarbutton-width);
+  max-width: var(--pf-toolbarbutton-width);
+  max-height: var(--pf-toolbarbutton-width);
+  padding: 0 !important;
+
+  .toolbarbutton-icon {
+    transition: transform var(--pf-ts-25), fill var(--pf-ts-25);
+    transition-timing-function: var(--pf-easing-bounce);
+    background-color: transparent !important;
+    outline: none !important;
+  }
+  & > .toolbarbutton-badge-stack {
+    background-color: transparent !important;
+  }
+  &:not([disabled]) {
+    &[checked],
+    &:hover {
+      background-color: var(--pf-toolbarbutton-background-color-hover);
+    }
+    &[open],
+    &:active {
+      background-color: var(--pf-toolbarbutton-background-color-active);
+    }
+    &:hover:active {
+      fill: var(--pf-icon-color-active) !important;
+    }
+  }
+}
+:root[fxastatus="signedin"] #fxa-avatar-image {
+  width: calc(var(--icon-size) + 4px) !important;
+  height: calc(var(--icon-size) + 4px) !important;
+}
+toolbar .toolbaritem-combined-buttons {
+  margin-inline: 0 !important;
+}
+#ipprotection-button:not([overflowedItem="true"], [cui-areatype="panel"]) {
+  min-width: unset !important;
+  max-width: unset !important;
+}
+.private-browsing-indicator-with-label,
+#fxa-avatar-label {
+  display: none;
+}
+
+/* toolbar */
+#navigator-toolbox {
+  border-bottom: none !important;
+  margin-top: 0 !important;
+
+  &:not(.fullscreen-floating-toolbox) {
+    z-index: unset !important;
+  }
+}
+#nav-bar {
+  min-height: var(--pf-navbar-height) !important;
+  border-top: none !important;
+  align-items: center;
+  will-change: unset !important;
+
+  :root:not([popup-window]) & {
+    padding-inline-start: var(--pf-navbar-padding-left) !important;
+  }
+}
+#nav-bar-customization-target {
+  align-items: center;
+  gap: var(--pf-toolbarbutton-gap);
+}
+#PanelUI-menu-button {
+  margin-inline: var(--pf-toolbarbutton-gap) var(--pf-separation) !important;
+}
+#nav-bar-overflow-button {
+  margin-inline-start: var(--pf-toolbarbutton-gap) !important;
+}
+
+/* hide sidebar active state */
+#navigator-toolbox[tabs-hidden] #sidebar-button[checked]:not(:hover) {
+  background-color: transparent !important;
+}
+
+/* toolbar buttons: animations */
+@media (prefers-reduced-motion: no-preference) {
+  #back-button:not([disabled]):hover:active .toolbarbutton-icon {
+    transform: translateX(-2px);
+  }
+  #forward-button:not([disabled]):hover:active .toolbarbutton-icon {
+    transform: translateX(2px);
+  }
+  #reload-button:not([disabled]):hover:active .toolbarbutton-icon {
+    transform: rotate(90deg);
+  }
+  #reload-button,
+  #stop-button {
+    & > .toolbarbutton-icon {
+      animation: pf-stop-reload-bounce var(--pf-ts-25) var(--pf-easing-bounce);
+    }
+    .toolbarbutton-animatable-box { display: none !important; }
+  }
+}
+@keyframes pf-stop-reload-bounce {
+  0% { scale: 0.6; }
+  100% { scale: 1; }
+}
+
+:root:not([customizing]) {
+  /* prevent navbar from expanding */
+  #vertical-spacer {
+    min-width: 0 !important;
+    max-width: 0 !important;
+    margin-inline-end: calc(var(--pf-toolbarbutton-gap) * -1);
+
+    &::before {
+      content: "";
+      width: var(--pf-unified-sidebar-width);
+      height: var(--pf-navbar-height);
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+    /* keep vertical spacer if system titlebar is enabled */
+    :root:not([customtitlebar]) #navigator-toolbox[tabs-hidden] & {
+      display: flex !important;
+    }
+  }
+  /* keep toolbar items on top of vertical spacer */
+  #nav-bar-customization-target > :is(toolbarbutton, toolbaritem) {
+    z-index: 2;
+  }
+  #urlbar-container {
+    z-index: 4 !important;
+  }
+
+  /* menu bar */
+  #toolbar-menubar:not([inactive]) {
+    position: fixed;
+    top: var(--pf-separation);
+    right: var(--pf-separation);
+    min-height: unset !important;
+    padding: 4px !important;
+    background-color: var(--panel-background-color) !important;
+    border-radius: var(--pf-border-radius-sm);
+    border: 1px solid var(--pf-border-color) !important;
+    box-shadow: var(--pf-box-shadow-md);
+    z-index: 5;
+    --inactive-titlebar-opacity: 1;
+  }
+
+  /* unified sidebar: floating bookmarks toolbar */
+  @media -moz-pref("parfait.layout.unified-sidebar") {
+    #navigator-toolbox[tabs-hidden] > #PersonalToolbar {
+      position: fixed;
+      position-anchor: --pf-browser;
+      left: calc(anchor(left) + var(--pf-bookmarks-margin));
+      right: calc(anchor(right) + var(--pf-bookmarks-margin));
+      bottom: var(--pf-separation);
+      transform: translateY(calc(100% + var(--pf-separation)));
+      height: calc(var(--pf-toolbarbutton-width) + 8px);
+      padding: 4px !important;
+      background-color: var(--pf-panel-background-color) !important;
+      border-radius: var(--pf-browser-border-radius);
+      outline: 1px solid var(--pf-border-color-light);
+      box-shadow: var(--pf-box-shadow-md);
+      overflow: unset !important;
+      opacity: 0 !important;
+      z-index: 3;
+      transition: transform var(--pf-ts-25) var(--pf-ts-25), opacity var(--pf-ts-25) var(--pf-ts-25) !important;
+      --pf-bookmarks-margin: calc(var(--pf-separation) * var(--pf-borderless, 0));
+
+      &:has(#personal-toolbar-empty:not([hidden])) {
+        visibility: hidden;
+      }
+      &:hover,
+      &:has(.bookmark-item:active, :is(.bookmark-item[type="menu"], #PlacesChevron)[open]) {
+        opacity: 1 !important;
+        transform: translateY(0%);
+      }
+      &::before {
+        content: "";
+        position: absolute;
+        inset-inline: 0;
+        inset-block: calc(var(--pf-browser-separation) * -1);
+        z-index: -1;
+      }
+    }
+  }
+}
+
+/* horizontal layout */
+@media not -moz-pref("sidebar.verticalTabs") {
+  :root:not([popup-window], [mini-window], [taskbartab]) {
+    #navigator-toolbox {
+      --toolbar-background-color: transparent;
+    }
+    #nav-bar {
+      order: -1;
+      &:-moz-window-inactive { opacity: var(--inactive-titlebar-opacity); }
+    }
+    #urlbar-container {
+      max-width: var(--urlbar-container-min-width);
+      margin-inline-end: auto !important;
+      anchor-name: --pf-urlbar;
+      --urlbar-container-min-width: 240px;
+    }
+    #wrapper-urlbar-container ~ :not(#wrapper-urlbar-container ~ :not([hidden]) ~ :not([hidden])),
+    #urlbar-container ~ :not(#urlbar-container ~ :not([hidden]) ~ :not([hidden])) {
+      anchor-name: --pf-navbar;
+    }
+    #TabsToolbar {
+      position: absolute;
+      position-anchor: --pf-urlbar;
+      left: calc(anchor(right) + var(--urlbar-margin-inline));
+      right: anchor(--pf-navbar left);
+    }
+    #TabsToolbar-customization-target {
+      align-items: center;
+      margin-inline-end: var(--pf-toolbarbutton-gap);
+      gap: var(--pf-toolbarbutton-gap);
+    }
+    .titlebar-spacer,
+    &:not([customizing]) :is(#nav-bar, #TabsToolbar) toolbarspring {
+      min-width: 0 !important;
+      max-width: 0 !important;
+      margin-inline-end: calc(var(--pf-toolbarbutton-gap) * -1);
+    }
+    #tabbrowser-tabs[orient="horizontal"]::before {
+      content: none !important;
+    }
+    &[customtitlebar]:not([macOSNativeFullscreen]) #nav-bar > .titlebar-buttonbox-container {
+      display: flex !important;
+    }
+    #TabsToolbar > .titlebar-buttonbox-container {
+      display: none !important;
+    }
+    #sidebar-container {
+      padding-inline: calc(var(--pf-browser-separation) / 2);
+      padding-block: 0 calc(var(--pf-browser-separation) / 2);
+    }
+    #search-container {
+      max-width: 320px;
+    }
+    /* hl: breakpoints */
+    @media (max-width: 600px) {
+      #nav-bar-customization-target > :is(toolbarbutton, toolbaritem):not(#urlbar-container, #unified-extensions-button, #nav-bar-overflow-button) {
+        display: none;
+      }
+    }
+    @media (max-width: 800px) {
+      #TabsToolbar-customization-target { visibility: collapse; }
+    }
+  }
+  #scrollbutton-up:has(~ scrollbox[orient="horizontal"][smoothscroll="true"]) {
+    &, ~ #scrollbutton-down {
+      list-style-image: url("chrome://global/skin/icons/arrow-left-12.svg") !important;
+    }
+    &:not([disabled]) {
+      border-inline-end: 1px solid var(--pf-border-color-light) !important;
+    }
+    & ~ #scrollbutton-down:not([disabled]) {
+      border-inline-start: 1px solid var(--pf-border-color-light) !important;
+    }
+  }
+  /* hl: toolbar autohide in fullscreen */
+  :root[inFullscreen][fullscreenNavToolboxHidden]:not([inDOMFullscreen]) #navigator-toolbox[style^="margin-top"] {
+    margin-top: calc(var(--pf-navbar-margin) - var(--pf-browser-separation)) !important;
+    padding-bottom: var(--pf-browser-separation) !important;
+    transition: none !important;
+
+    @media (-moz-platform: macos) {
+      .titlebar-buttonbox-container { display: none; }
+    }
+  }
+}
+
+/* taskbar tabs */
+:root[taskbartab] {
+  .titlebar-spacer,
+  toolbarspring:not(#urlbar-container ~ toolbarspring) {
+    display: none;
+  }
+  #taskbar-tabs-favicon {
+    border-radius: var(--pf-favicon-border-radius);
+  }
+  #urlbar:not(:hover) .urlbar-background {
+    background-color: transparent !important;
+  }
+}
+
+/* document picture-in-picture */
+@media (display-mode: picture-in-picture) {
+  :root {
+    --pf-urlbar-height: 24px;
+    --pf-toolbarbutton-width: 24px;
+
+    @media (-moz-windows-mica) {
+      background: transparent !important;
+      --toolbox-background-color: transparent !important;
+    }
+  }
+  #nav-bar {
+    padding-inline-end: var(--pf-navbar-padding-block) !important;
+  }
+  .urlbar-background {
+    background-color: transparent !important;
+  }
+}
+
+/* mini window */
+:root[mini-window] {
+  --pf-urlbar-height: 24px;
+  --pf-toolbarbutton-width: 24px;
+
+  #nav-bar {
+    padding-inline: var(--pf-navbar-padding-block) !important;
+  }
+  #mini-window-restore-button {
+    order: -1;
+  }
+  #mini-window-close-button {
+    margin-inline-start: var(--pf-toolbarbutton-gap) !important;
+  }
+  #stop-reload-button {
+    display: none;
+  }
+  .urlbar-background {
+    background-color: transparent !important;
+  }
+  #urlbar-input {
+    text-align: center !important;
+  }
+}

@@ -120,6 +120,33 @@ Windows sit side by side on a strip that continues off the right of the screen.
 |---|---|
 | Super+Escape | Let the focused app take all shortcuts (e.g. remote desktop, VMs); press again to undo |
 
+## Zathura (PDF, EPUB, MOBI, DjVu, comics)
+| Keys | Action |
+|---|---|
+| o | Open a file (`:open ~/path`, Tab completes) |
+| O | Open a file from the current file's folder |
+| j / k or ↓ / ↑ | Smooth scroll down / up |
+| Space / Shift+Space | Next / previous screen |
+| J / K | Next / previous page |
+| gg / G / 42G | First page / last page / page 42 |
+| H / L | Top / bottom of the current page |
+| / or ? | Search forward / back; n / N for next / previous match |
+| Tab | Table of contents (Enter to jump, Tab to close) |
+| f / F | Follow a link / show where a link goes |
+| Ctrl+O / Ctrl+I | Jump back / forward (after following links) |
+| mX / 'X | Set mark X / jump to mark X (X is any letter or number) |
+| `:bmark name` / `:bjump name` / `:blist` | Save / jump to / list bookmarks |
+| a / s | Fit whole page / fit width |
+| + / - / = | Zoom in / out / reset |
+| d | Two pages side by side |
+| r | Rotate 90° |
+| Ctrl+R | Wallpaper colours on/off (original page colours) |
+| b / B | Show / hide the statusbar (page number and %) |
+| R | Reload the file |
+| F5 / F11 | Presentation / fullscreen |
+| Drag with the mouse | Select text (copied to clipboard) |
+| q | Quit |
+
 ## Terminal extras
 | Command | What it does |
 |---|---|

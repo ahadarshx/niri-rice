@@ -27,6 +27,8 @@ copy "$cfg/matugen/config.toml"             matugen/config.toml
 copy "$cfg/matugen/templates/obsidian-dms.css" matugen/templates/obsidian-dms.css
 copy "$cfg/matugen/templates/btop.theme"    matugen/templates/btop.theme
 copy "$cfg/matugen/templates/cava.config"   matugen/templates/cava.config
+copy "$cfg/matugen/templates/zathura-colors" matugen/templates/zathura-colors
+copy "$cfg/zathura/zathurarc"               zathura/zathurarc
 copy "$cfg/fastfetch/config.jsonc"          fastfetch/config.jsonc
 [[ -f $cfg/fastfetch/cat.png ]] && cp "$cfg/fastfetch/cat.png" "$repo/fastfetch/cat.png"
 
@@ -35,6 +37,10 @@ for z in "$HOME"/.zen/*/chrome/userChrome.css; do copy "$z" zen/userChrome.css; 
 # Firefox stylesheets (wallpaper colours), Dux as the file picker
 copy "$cfg/mozilla/firefox/dms-chrome/userChrome.css"  firefox/userChrome.css
 copy "$cfg/mozilla/firefox/dms-chrome/userContent.css" firefox/userContent.css
+copy "$cfg/mozilla/firefox/dms-chrome/dms-chrome.css"  firefox/dms-chrome.css
+copy "$cfg/mozilla/firefox/dms-chrome/dms-content.css" firefox/dms-content.css
+copy "$cfg/mozilla/firefox/dms-chrome/sgg-newtab.css"  firefox/sgg-newtab.css
+rm -rf "$repo/firefox/parfait" && cp -r "$cfg/mozilla/firefox/dms-chrome/parfait" "$repo/firefox/parfait"   # Parfait base theme (MPL-2.0)
 copy "$cfg/xdg-desktop-portal/niri-portals.conf"       xdg-desktop-portal/niri-portals.conf
 copy "$cfg/systemd/user/dms.service.d/shell-dir.conf" systemd/dms.service.d/shell-dir.conf
 

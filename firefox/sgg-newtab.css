@@ -1,0 +1,216 @@
+/* Home / new tab: "liquid glass" from Safari Golden Gate (MIT, github.com/carlosjrrr/Safari-Golden-Gate).
+   Copied from its userContent.css; the dark glass is tinted with the DMS surface colour. */
+@-moz-document url("about:newtab"), url("about:home") {
+	:root {
+		/* no wallpaper: plain DMS tonal surfaces (the glass values below apply once a wallpaper is set) */
+		--personal-liquid-glass: var(--md-sys-color-surface-container-high, rgba(255, 255, 255, 0.30));
+		--personal-liquid-glass-hover: var(--md-sys-color-surface-container-highest, rgba(255, 255, 255, 0.42));
+		--personal-liquid-glass-shadow:
+			0 8px 26px rgba(24, 31, 45, 0.16),
+			inset 0 1px 0 rgba(255, 255, 255, 0.58);
+		--personal-liquid-glass-shadow-hover:
+			0 10px 30px rgba(24, 31, 45, 0.21),
+			inset 0 1px 0 rgba(255, 255, 255, 0.72);
+		--personal-liquid-glass-filter: blur(18px) saturate(145%);
+	}
+
+	/* Firefox marks wallpaper contrast, so dark scenes receive smoked glass. */
+	.darkWallpaper {
+		--personal-liquid-glass: color-mix(in srgb, var(--md-sys-color-surface, rgb(18, 24, 38)) 30%, transparent);
+		--personal-liquid-glass-hover: color-mix(in srgb, var(--md-sys-color-surface-container, rgb(25, 32, 48)) 42%, transparent);
+		--newtab-text-primary-color: #fff !important;
+		--newtab-text-secondary-color: rgba(255, 255, 255, 0.84) !important;
+		--newtab-text-secondary-text: rgba(255, 255, 255, 0.84) !important;
+		--newtab-contextual-text-primary-color: #fff !important;
+		--newtab-contextual-text-secondary-color: rgba(255, 255, 255, 0.84) !important;
+		--newtab-text-topic-label-color: rgba(255, 255, 255, 0.78) !important;
+		--personal-liquid-glass-shadow:
+			0 8px 28px rgba(0, 0, 0, 0.30),
+			inset 0 1px 0 rgba(255, 255, 255, 0.20);
+		--personal-liquid-glass-shadow-hover:
+			0 10px 32px rgba(0, 0, 0, 0.38),
+			inset 0 1px 0 rgba(255, 255, 255, 0.28);
+	}
+
+	.lightWallpaper {
+		--personal-liquid-glass: rgba(255, 255, 255, 0.30);
+		--personal-liquid-glass-hover: rgba(255, 255, 255, 0.42);
+		--newtab-text-primary-color: #171717 !important;
+		--newtab-text-secondary-color: rgba(23, 23, 23, 0.78) !important;
+		--newtab-text-secondary-text: rgba(23, 23, 23, 0.78) !important;
+		--newtab-contextual-text-primary-color: #171717 !important;
+		--newtab-contextual-text-secondary-color: rgba(23, 23, 23, 0.78) !important;
+		--newtab-text-topic-label-color: rgba(23, 23, 23, 0.72) !important;
+	}
+
+	/* Search card below the Firefox logo.  Its native Web Component reads
+	 * these variables; the outer element supplies the real backdrop blur. */
+	.search-wrapper content-search-handoff-ui {
+		--content-search-handoff-ui-background-color: transparent !important;
+		background: var(--personal-liquid-glass) !important;
+		border: 0 !important;
+		border-radius: 18px !important;
+		box-shadow: var(--personal-liquid-glass-shadow) !important;
+		backdrop-filter: var(--personal-liquid-glass-filter) !important;
+		transition: background-color 160ms ease, box-shadow 160ms ease,
+			transform 160ms ease !important;
+	}
+
+	.search-wrapper content-search-handoff-ui:hover {
+		background: var(--personal-liquid-glass-hover) !important;
+		box-shadow: var(--personal-liquid-glass-shadow-hover) !important;
+	}
+
+	/* Recent/frequent sites, including sponsored shortcuts. */
+	.top-site-outer .tile {
+		background: var(--personal-liquid-glass) !important;
+		border: 0 !important;
+		box-shadow: var(--personal-liquid-glass-shadow) !important;
+		backdrop-filter: var(--personal-liquid-glass-filter) !important;
+		transition: background-color 160ms ease, box-shadow 160ms ease,
+			transform 160ms ease !important;
+	}
+
+	.top-site-outer:is(:hover, :focus-within, .active) .tile {
+		background: var(--personal-liquid-glass-hover) !important;
+		box-shadow: var(--personal-liquid-glass-shadow-hover) !important;
+		transform: translateY(-1px);
+	}
+
+	/* Weather and the current New Tab widget cards. */
+	.weather-forecast-widget,
+	.widgets-container > .widget-wrapper > :is(
+		.lists,
+		.focus-timer,
+		.weather-widget,
+		.clocks-widget,
+		.widget,
+		.weather-forecast-widget
+	) {
+		background: var(--personal-liquid-glass) !important;
+		border: 0 !important;
+		outline: 0 !important;
+		box-shadow: var(--personal-liquid-glass-shadow) !important;
+		backdrop-filter: var(--personal-liquid-glass-filter) !important;
+	}
+
+	.weather-forecast-widget:hover,
+	.widgets-container > .widget-wrapper > :is(
+		.lists,
+		.focus-timer,
+		.weather-widget,
+		.clocks-widget,
+		.widget,
+		.weather-forecast-widget
+	):is(:hover, :focus-within) {
+		background: var(--personal-liquid-glass-hover) !important;
+		outline: 0 !important;
+		box-shadow: var(--personal-liquid-glass-shadow-hover) !important;
+	}
+
+	/* Firefox 158 may mount the four widgets through an extra draggable
+	 * wrapper. Target their actual cards independently of that hierarchy so
+	 * every one receives exactly the same glass opacity as the cards above. */
+	.nova-enabled :is(.lists, .focus-timer, .weather-widget, .clocks-widget) {
+		background: var(--personal-liquid-glass) !important;
+		background-color: var(--personal-liquid-glass) !important;
+		border: 0 !important;
+		outline: 0 !important;
+		box-shadow: var(--personal-liquid-glass-shadow) !important;
+		backdrop-filter: var(--personal-liquid-glass-filter) !important;
+	}
+
+	.nova-enabled :is(.lists, .focus-timer, .weather-widget, .clocks-widget):is(:hover, :focus-within) {
+		background: var(--personal-liquid-glass-hover) !important;
+		background-color: var(--personal-liquid-glass-hover) !important;
+		outline: 0 !important;
+		box-shadow: var(--personal-liquid-glass-shadow-hover) !important;
+	}
+
+	/* The forecast cells had a second opaque surface inside the weather card. */
+	.nova-enabled .weather-widget .forecast-row .forecast-row-items li {
+		background: rgba(255, 255, 255, 0.10) !important;
+		backdrop-filter: blur(8px) saturate(130%) !important;
+	}
+
+	.darkWallpaper .nova-enabled .weather-widget .forecast-row .forecast-row-items li {
+		background: rgba(10, 15, 25, 0.12) !important;
+	}
+
+	/* Recommended and sponsored content cards. Images stay untouched; only
+	 * their formerly solid card surface becomes translucent. */
+	.card-outer,
+	.ds-card.sections-card-ui,
+	.ad-banner-wrapper .ad-banner-inner {
+		background: var(--personal-liquid-glass) !important;
+		border: 0 !important;
+		box-shadow: var(--personal-liquid-glass-shadow) !important;
+		backdrop-filter: var(--personal-liquid-glass-filter) !important;
+		overflow: hidden;
+		transition: background-color 160ms ease, box-shadow 160ms ease,
+			transform 160ms ease !important;
+	}
+
+	.card-outer:is(:hover, :focus-within),
+	.ds-card.sections-card-ui:is(:hover, :focus-within, .active),
+	.ad-banner-wrapper .ad-banner-inner:is(:hover, :focus-within) {
+		background: var(--personal-liquid-glass-hover) !important;
+		box-shadow: var(--personal-liquid-glass-shadow-hover) !important;
+		transform: translateY(-1px);
+	}
+
+	.card-outer .card,
+	.ds-card.sections-card-ui :is(.ds-card-link, .meta) {
+		background-color: transparent !important;
+	}
+
+	/* Keep labels and descriptions readable on either wallpaper family. */
+	.darkWallpaper :is(
+		.top-site-outer .title,
+		.top-site-outer .sponsored-label,
+		.weather-forecast-widget,
+		.widgets-container :is(.lists, .focus-timer, .weather-widget, .clocks-widget),
+		.card-outer,
+		.ds-card.sections-card-ui,
+		.ad-banner-wrapper .ad-banner-inner
+	) {
+		color: #fff !important;
+		text-shadow: 0 1px 3px rgba(0, 0, 0, 0.58);
+	}
+
+	.darkWallpaper .search-wrapper content-search-handoff-ui {
+		--content-search-handoff-ui-color: #fff !important;
+		--content-search-handoff-ui-fill: rgba(255, 255, 255, 0.82) !important;
+		--content-search-handoff-ui-caret-color: #fff !important;
+	}
+
+	.lightWallpaper :is(
+		.top-site-outer .title,
+		.top-site-outer .sponsored-label,
+		.weather-forecast-widget,
+		.widgets-container :is(.lists, .focus-timer, .weather-widget, .clocks-widget),
+		.card-outer,
+		.ds-card.sections-card-ui,
+		.ad-banner-wrapper .ad-banner-inner
+	) {
+		color: #171717 !important;
+		text-shadow: 0 1px 2px rgba(255, 255, 255, 0.48);
+	}
+
+	.lightWallpaper .search-wrapper content-search-handoff-ui {
+		--content-search-handoff-ui-color: #171717 !important;
+		--content-search-handoff-ui-fill: rgba(23, 23, 23, 0.76) !important;
+		--content-search-handoff-ui-caret-color: #171717 !important;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.search-wrapper content-search-handoff-ui,
+		.top-site-outer .tile,
+		.widgets-container :is(.lists, .focus-timer, .weather-widget, .clocks-widget),
+		.card-outer,
+		.ds-card.sections-card-ui,
+		.ad-banner-wrapper .ad-banner-inner {
+			transition: none !important;
+		}
+	}
+}

@@ -1,0 +1,144 @@
+/*
+  Parfait - browser.css
+  https://github.com/reizumii/parfait
+*/
+
+/* browser background */
+:root:not([lwtheme]) {
+  /* nova browser background */
+  --toolbox-background-image: none !important;
+  --toolbox-background-gradient: none !important;
+
+  #browser {
+    --toolbar-background-color: transparent;
+  }
+  &[sidebar-expand-on-hover] #sidebar-container:not([sidebar-launcher-expanded], [sidebar-ongoing-animations]) {
+    background: none !important;
+  }
+  /* default background colors */
+  @media not ((forced-colors) or (-moz-native-theme) or (-moz-windows-mica) or -moz-pref("parfait.background.transparent")) {
+    --toolbox-background-color: light-dark(var(--color-gray-10), var(--color-gray-80)) !important;
+  }
+  /* accent color browser background */
+  @media -moz-pref("parfait.background.transparent") and (not (-moz-platform: windows)) {
+    --toolbox-background-color: var(--pf-browser-background-color-alpha) !important;
+  }
+  @media -moz-pref("parfait.background.accent-color") {
+    --toolbox-background-color: color-mix(in oklch, var(--pf-browser-background-color) var(--pf-accent-color-background-opacity), transparent) !important;
+    --toolbox-background-color-inactive: color-mix(in oklch, var(--pf-browser-background-color), var(--color-gray-50) 10%) !important;
+    --pf-sidebar-background-color: var(--pf-browser-background-color);
+
+    @media -moz-pref("parfait.background.accent-color.gradient") {
+      --pf-accent-color-background-gradient-fade: color-mix(in oklch, var(--pf-browser-background-color), var(--pf-contrast-color-invert) 50%);
+      --pf-accent-color-background-gradient-1: color-mix(in oklch, var(--pf-accent-color-background-gradient-fade) var(--pf-accent-color-background-opacity), transparent);
+      --pf-accent-color-background-gradient-2: color-mix(in oklch, var(--pf-browser-background-color) var(--pf-accent-color-background-opacity), transparent);
+      --toolbox-background-image: linear-gradient(var(--pf-accent-color-background-gradient-1), var(--pf-accent-color-background-gradient-2)) !important;
+      --pf-sidebar-background-color: linear-gradient(var(--pf-accent-color-background-gradient-fade), var(--pf-browser-background-color));
+    }
+    &[sidebar-expand-on-hover] #sidebar-container:is([sidebar-launcher-expanded], [sidebar-ongoing-animations]) {
+      background: var(--pf-browser-background-color) !important;
+    }
+  }
+  /* macos: window material */
+  @media (-moz-platform: macos) and (not (prefers-reduced-transparency)) {
+    appearance: -moz-sidebar !important;
+  }
+}
+
+/* lwt theme */
+:root[lwtheme] {
+  --pf-sidebar-background-color: var(--toolbox-background-color);
+  --pf-split-border-color: var(--lwt-tab-line-color, var(--pf-accent-color));
+  --focus-outline-color: var(--toolbar-field-border-color-focus) !important;
+}
+
+:root:not([inDOMFullscreen], [popup-window], [mini-window], [taskbartab]) {
+  /* browser separation */
+  #tabbrowser-tabbox {
+    anchor-name: --pf-browser;
+    margin-inline-end: var(--pf-browser-padding) !important;
+    margin-block-end: var(--pf-browser-padding) !important;
+
+    /* force enable background blur */
+    @media -moz-pref("parfait.theme.blur.enabled") {
+      browser:not(.devtools-toolbox-iframe.docked-right) {
+        backface-visibility: hidden;
+        translate: 0;
+      }
+    }
+  }
+  #navigator-toolbox:not([tabs-hidden]) ~ #browser > #tabbrowser-tabbox:not([sidebar-shown]) {
+    margin-inline: var(--pf-browser-padding) !important;
+  }
+  .browserContainer {
+    border-radius: calc(var(--pf-browser-border-radius) * (1 - var(--pf-borderless, 0))) !important;
+    box-shadow: var(--pf-browser-box-shadow) !important;
+    border: none !important;
+    outline-offset: 0 !important;
+    -moz-window-dragging: no-drag;
+
+    .browserSidebarContainer:not(.split-view-panel.deck-selected) & {
+      outline: 0.5px solid var(--chrome-content-separator-color) !important;
+    }
+    /* make the web view transparent */
+    @media -moz-pref("browser.tabs.allow_transparent_browser") {
+      --tabpanel-background-color: var(--pf-tabpanel-background-color);
+    }
+  }
+  /* split view */
+  #tabbrowser-tabpanels[splitview] {
+    .split-view-splitter {
+      background-color: transparent !important;
+      min-width: var(--pf-split-resize-padding) !important;
+      margin: 0 !important;
+    }
+    .split-view-panel {
+      margin: 0 !important;
+      overflow: unset !important;
+
+      &[column="1"]::after {
+        content: "";
+        width: 2px;
+        height: 96px;
+        background-color: transparent;
+        border-radius: var(--border-radius-circle);
+        position: absolute;
+        left: calc(-1px - (var(--pf-split-resize-padding) / 2));
+        top: calc(50% - (96px / 2));
+        pointer-events: none;
+        transition: background-color var(--pf-ts-15);
+      }
+      &.deck-selected > .browserContainer {
+        outline: 2px solid var(--pf-split-border-color, var(--pf-accent-color)) !important;
+      }
+    }
+    .split-view-splitter:hover ~ .split-view-panel[column="1"]::after {
+      background-color: light-dark(var(--color-black-alpha-30), var(--color-white-alpha-20));
+    }
+    split-view-footer { display: none !important; }
+  }
+}
+
+/* customize menu */
+#customization-panel-container {
+  padding-block-start: var(--pf-separation) !important;
+  padding-inline-end: var(--pf-separation) !important;
+}
+.panel-arrowbox {
+  display: none !important;
+}
+.panel-arrowcontent {
+  border-radius: var(--pf-border-radius-sm) !important;
+  box-shadow: var(--pf-box-shadow-md) !important;
+}
+
+/* undo some nova stuff */
+button:not([part]),
+moz-button {
+  --button-background-color: var(--pf-toolbarbutton-background-color);
+  --button-border: none;
+}
+menulist {
+  --button-background-color: var(--pf-toolbarbutton-background-color);
+  --border-width: 0;
+}

@@ -1,0 +1,131 @@
+/* Firefox's own pages in DMS colours, and a Material You settings page.
+   Firefox paints these pages from design tokens; mapping the tokens reaches every
+   control, even inside components (idea from Safari Golden Gate's in-content.css).
+   !important is needed: Firefox's sheets are author level, this one is user level.
+   Scoped to about: pages so ordinary websites are never touched. */
+
+@-moz-document url-prefix("about:") {
+  :root {
+    --background-color-canvas: var(--md-sys-color-surface-container-low) !important;
+    --background-color-box: var(--md-sys-color-surface-container) !important;
+    --background-color-box-info: var(--md-sys-color-surface-container-high) !important;
+    --background-color-list-item-hover: color-mix(in srgb, var(--md-sys-color-on-surface) 7%, transparent) !important;
+    --text-color: var(--md-sys-color-on-surface) !important;
+    --text-color-deemphasized: var(--md-sys-color-on-surface-variant) !important;
+    --icon-color: var(--md-sys-color-on-surface-variant) !important;
+    --border-color: var(--md-sys-color-outline-variant) !important;
+    --border-color-deemphasized: color-mix(in srgb, var(--md-sys-color-outline-variant) 60%, transparent) !important;
+    --border-color-interactive: var(--md-sys-color-outline) !important;
+    --border-color-interactive-hover: var(--md-sys-color-on-surface-variant) !important;
+    --focus-outline-color: var(--md-sys-color-primary) !important;
+
+    --color-accent-primary: var(--md-sys-color-primary) !important;
+    --color-accent-primary-hover: color-mix(in srgb, var(--md-sys-color-primary), var(--md-sys-color-on-primary) 10%) !important;
+    --color-accent-primary-active: color-mix(in srgb, var(--md-sys-color-primary), var(--md-sys-color-on-primary) 18%) !important;
+    --link-color: var(--md-sys-color-primary) !important;
+    --link-color-hover: var(--md-sys-color-primary) !important;
+    --link-color-active: var(--md-sys-color-primary) !important;
+    --link-color-visited: var(--md-sys-color-primary) !important;
+
+    /* buttons: full pills. Tonal by default, filled primary for main actions */
+    --button-border-radius: 999px !important;
+    --button-background-color: var(--md-sys-color-surface-container-highest) !important;
+    --button-background-color-hover: color-mix(in srgb, var(--md-sys-color-surface-container-highest), var(--md-sys-color-on-surface) 8%) !important;
+    --button-background-color-active: color-mix(in srgb, var(--md-sys-color-surface-container-highest), var(--md-sys-color-on-surface) 14%) !important;
+    --button-text-color: var(--md-sys-color-on-surface) !important;
+    --button-border-color: transparent !important;
+    --button-background-color-primary: var(--md-sys-color-primary) !important;
+    --button-background-color-primary-hover: color-mix(in srgb, var(--md-sys-color-primary), var(--md-sys-color-on-primary) 10%) !important;
+    --button-background-color-primary-active: color-mix(in srgb, var(--md-sys-color-primary), var(--md-sys-color-on-primary) 18%) !important;
+    --button-text-color-primary: var(--md-sys-color-on-primary) !important;
+    --button-border-color-primary: transparent !important;
+
+    /* inputs */
+    --input-border-radius: 12px !important;
+    --input-search-border-radius: 999px !important;
+    --input-background-color: var(--md-sys-color-surface-container-high) !important;
+    --input-border-color: transparent !important;
+    --input-text-color: var(--md-sys-color-on-surface) !important;
+
+    /* switches: M3 style, primary track when on */
+    --toggle-background-color-pressed: var(--md-sys-color-primary) !important;
+    --toggle-background-color-pressed-hover: color-mix(in srgb, var(--md-sys-color-primary), var(--md-sys-color-on-primary) 10%) !important;
+    --toggle-background-color-pressed-active: color-mix(in srgb, var(--md-sys-color-primary), var(--md-sys-color-on-primary) 18%) !important;
+    --toggle-dot-background-color-on-pressed: var(--md-sys-color-on-primary) !important;
+    --toggle-background-color: var(--md-sys-color-surface-container-highest) !important;
+    --toggle-border-color: var(--md-sys-color-outline) !important;
+    --toggle-dot-background-color: var(--md-sys-color-outline) !important;
+
+    /* cards and setting boxes: filled tonal cards, no outlines */
+    --card-background-color: var(--md-sys-color-surface-container) !important;
+    --card-border-color: transparent !important;
+    --card-border-radius: 20px !important;
+    --card-box-shadow: none !important;
+    --box-border-radius: 16px !important;
+    --box-border-color: transparent !important;
+    --box-border-radius-inner: 12px !important;
+
+    /* new tab and Firefox View */
+    --newtab-background-color: var(--md-sys-color-surface-container-low) !important;
+    --newtab-background-color-secondary: var(--md-sys-color-surface-container) !important;
+    --newtab-background-card: var(--md-sys-color-surface-container) !important;
+    --newtab-text-primary-color: var(--md-sys-color-on-surface) !important;
+  }
+  /* faint scrollbars */
+  :root, body { scrollbar-color: color-mix(in srgb, var(--md-sys-color-on-surface) 25%, transparent) transparent !important; }
+}
+
+/* ---------- Settings: Material You redesign ---------- */
+@-moz-document url-prefix("about:preferences"), url-prefix("about:settings") {
+  body { background: var(--md-sys-color-surface-container-low) !important; }
+
+  /* navigation drawer: pill items, tonal selection, no side indicator */
+  #categories {
+    --page-nav-button-border-radius: 999px !important;
+    --page-nav-button-border-radius-focused: 999px !important;
+    --page-nav-button-padding: 10px 16px !important;
+    --page-nav-button-gap: 14px !important;
+    --page-nav-gap: 4px !important;
+    --page-nav-button-background-color: transparent !important;
+    --page-nav-button-background-color-hover: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent) !important;
+    --page-nav-button-background-color-active: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent) !important;
+    --page-nav-button-background-color-selected: var(--md-sys-color-secondary-container) !important;
+    --page-nav-button-text-color: var(--md-sys-color-on-surface-variant) !important;
+    --page-nav-button-text-color-hover: var(--md-sys-color-on-surface) !important;
+    --page-nav-button-text-color-selected: var(--md-sys-color-on-secondary-container) !important;
+    --page-nav-button-border-color: transparent !important;
+    --page-nav-button-border-color-hover: transparent !important;
+    --page-nav-button-indicator-background-color: transparent !important;
+    --page-nav-hr-background-color: var(--md-sys-color-outline-variant) !important;
+    --page-nav-border-color: transparent !important;
+  }
+
+  /* content column: a little wider, headings with Material type scale */
+  .pane-container { width: min(100%, 720px) !important; }
+  h1 { font-size: 1.75rem !important; font-weight: 600 !important; letter-spacing: -0.01em; }
+  h2 { font-size: 1.1rem !important; font-weight: 600 !important; }
+  .description-deemphasized { color: var(--md-sys-color-on-surface-variant) !important; }
+
+  /* search sits on the page as a pill */
+  #search-container { background-color: var(--md-sys-color-surface-container-low) !important; }
+
+  /* each group of settings becomes a filled card */
+  setting-group[data-category]:not([hidden]),
+  groupbox[data-category]:not([hidden]) {
+    background: var(--md-sys-color-surface-container);
+    border-radius: 20px;
+    padding: 16px 20px;
+  }
+
+  /* panes fade up when you switch section */
+  @media (prefers-reduced-motion: no-preference) {
+    setting-group[data-category]:not([hidden]),
+    groupbox[data-category]:not([hidden]) {
+      animation: dms-pane-in 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+  }
+  @keyframes dms-pane-in {
+    from { opacity: 0; translate: 0 8px; }
+    to   { opacity: 1; translate: 0 0; }
+  }
+}

@@ -86,9 +86,9 @@ window-rule {
     opacity 0.88
 }
 
-// Firefox: same subtle glass; colours come from its userChrome (DMS palette).
+// Firefox: solid while focused, subtle glass only when out of focus.
 window-rule {
-    match app-id="^(firefox|org\\.mozilla\\.firefox)$"
+    match app-id="^(firefox|org\\.mozilla\\.firefox)$" is-focused=false
     opacity 0.88
 }
 
@@ -129,4 +129,10 @@ window-rule {
     open-floating true
     default-column-width { fixed 1100; }
     default-window-height { fixed 600; }
+}
+
+// zathura: half-width reading column; its translucent background picks up the blur.
+window-rule {
+    match app-id="^org\\.pwmt\\.zathura$"
+    default-column-width { proportion 0.5; }
 }

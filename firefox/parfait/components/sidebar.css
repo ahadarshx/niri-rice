@@ -1,0 +1,504 @@
+/*
+  Parfait - sidebar.css
+  https://github.com/reizumii/parfait
+*/
+
+/* unified sidebar */
+@media -moz-pref("sidebar.verticalTabs") and -moz-pref("parfait.layout.unified-sidebar") {
+  :root:not([popup-window], [mini-window], [taskbartab]) {
+    --pf-unified-sidebar: 1;
+
+    &:not([inDOMFullscreen]) :is(#tabbrowser-tabbox, #sidebar-box, #sidebar-splitter, .browserStack) {
+      transition: margin-top var(--pf-ts-25);
+      transition-delay: calc((var(--pf-navbar-delay) * (1 - var(--pf-navbar-hover, 0))) * var(--pf-unified-sidebar)) !important;
+    }
+    &:has(#sidebar-container:not([sidebar-launcher-expanded])) {
+      @media not -moz-pref("sidebar.visibility", "hide-sidebar") {
+        --pf-unified-sidebar: 0;
+      }
+    }
+    @media -moz-pref("sidebar.visibility", "expand-on-hover") {
+      --pf-unified-sidebar: 0;
+    }
+    /* us: auto hide navbar */
+    @container style(--pf-unified-sidebar: 1) {
+      :is(#tabbrowser-tabbox, #sidebar-box, #sidebar-splitter) {
+        margin-top: calc(var(--pf-navbar-margin) * (1 - var(--pf-navbar-hover, 1))) !important;
+      }
+      @media not ((-moz-platform: macos) or -moz-pref("parfait.traffic-lights.enabled")) {
+        &:has(#nav-bar > .titlebar-buttonbox-container:hover) :is(#nav-bar, #browser) {
+          --pf-navbar-hover: 1 !important;
+        }
+      }
+      &:has(#nav-bar toolbarbutton:not(#back-button, #forward-button)[open], #searchbar-new .searchmode-switcher[open], #searchbar-new[focused], #nav-bar:hover,
+      #downloads-button[notification]:not([hidden])) :where(#nav-bar, #browser) {
+        --pf-navbar-hover: 1;
+      }
+      &:has(:is(#nav-bar > .titlebar-buttonbox-container, #urlbar, #sidebar-button, #back-button, #forward-button, #stop-reload-button,
+        #vertical-spacer):hover) :is(#nav-bar, #browser),
+      &:not([inDOMFullscreen]) :is(#nav-bar, #browser) {
+        --pf-navbar-hover: 0;
+      }
+      /* us: seamless top bar */
+      .browserStack {
+        margin-top: calc(var(--pf-navbar-margin) * var(--pf-navbar-hover, 0));
+      }
+      /* us: sidebar button gutter */
+      #nav-bar-customization-target > #sidebar-button:first-child {
+        margin-inline-end: calc(var(--pf-sidebar-gutter) * var(--pf-unified-sidebar)) !important;
+      }
+      #nav-bar:has(#sidebar-button:first-child + #back-button + #forward-button + #stop-reload-button) {
+        & > :not(#nav-bar-customization-target),
+        #stop-reload-button ~ :not(#urlbar-container) {
+          opacity: var(--pf-navbar-hover, 0);
+          transition: opacity var(--pf-ts-15) calc(var(--pf-navbar-delay) * (1 - var(--pf-navbar-hover, 0)));
+        }
+      }
+      /* us: borderless navbar trigger area */
+      #nav-bar::before {
+        content: "";
+        height: calc(var(--pf-navbar-trigger-height) * var(--pf-borderless, 0));
+        position: fixed;
+        position-anchor: --pf-browser;
+        top: anchor(top);
+        left: anchor(left);
+        right: anchor(right);
+        z-index: 3;
+      }
+    }
+    &:not([customizing]) #navigator-toolbox {
+      --inactive-titlebar-opacity: 1;
+
+      #urlbar-container {
+        max-width: calc(100% * (1 - var(--pf-unified-sidebar))) !important;
+      }
+      #urlbar-container ~ :not(#urlbar-container ~ :not([hidden]) ~ :not([hidden])) {
+        margin-inline-start: auto !important;
+      }
+    }
+  }
+  /* main sidebar */
+  #sidebar-container[sidebar-launcher-expanded] {
+    width: var(--pf-unified-sidebar-width) !important;
+    height: calc(100% - (var(--pf-sidebar-margin) * var(--pf-unified-sidebar))) !important;
+    position: relative;
+    top: calc(var(--pf-sidebar-margin) * var(--pf-unified-sidebar));
+    transition: width var(--pf-ts-25), transform var(--pf-ts-25) !important;
+
+    #vertical-tabs {
+      width: var(--pf-unified-sidebar-width);
+      -moz-window-dragging: drag;
+    }
+  }
+  #sidebar-launcher-splitter {
+    display: none;
+  }
+  .wrapper:has(.tools-and-extensions) {
+    width: 100% !important;
+  }
+}
+
+/* sidebar 2 */
+#sidebar-box {
+  view-transition-name: none !important;
+  margin-block-end: var(--pf-browser-padding) !important;
+  outline: 0.5px solid var(--chrome-content-separator-color) !important;
+  box-shadow: var(--pf-browser-box-shadow);
+  border-radius: calc(var(--pf-browser-border-radius) * (1 - var(--pf-borderless, 0))) !important;
+  border: none !important;
+  overflow: clip;
+  --browser-area-z-index-sidebar: 2;
+  -moz-window-dragging: no-drag;
+}
+#sidebar-panel-header {
+  padding-inline-start: 1.25rem !important;
+}
+.sidebar-panel-heading > h4 {
+  font-size: var(--pf-font-size-1);
+  font-weight: 600;
+  margin-block: 0 !important;
+}
+#sidebar-splitter {
+  margin-inline: calc((var(--pf-browser-separation) - var(--splitter-width)) / 2) !important;
+  margin-block-end: var(--pf-browser-padding) !important;
+}
+
+/* disable sidebar autohide in fullscreen */
+:root[fullscreenNavToolboxHidden]:not([inDOMFullscreen]) #sidebar-container {
+  content-visibility: unset !important;
+  flex-basis: unset !important;
+  min-width: unset !important;
+}
+
+/* customize sidebar */
+@-moz-document url("chrome://browser/content/sidebar/sidebar-customize.html") {
+  [data-l10n-id="sidebar-show-on-the-right"]:not([checked]) { display: none !important; }
+}
+
+/* splitters */
+#vertical-pinned-tabs-splitter,
+#sidebar-tools-and-extensions-splitter {
+  width: 20px;
+  min-height: 2px !important;
+  margin-inline: auto !important;
+  margin-block: calc((var(--tab-margin-block) / 2) * -1) !important;
+  background: transparent !important;
+  transition: width var(--pf-ts-25), background-color var(--pf-ts-25);
+
+  &:hover {
+    width: 50%;
+    background-color: color-mix(in srgb, var(--color-accent-primary), transparent) !important;
+  }
+}
+#sidebar-tools-and-extensions-splitter {
+  margin-block: calc(var(--tab-margin-block) * 2) !important;
+}
+
+/* bottom strip */
+.tools-and-extensions.actions-list.overflow-button {
+  display: none !important;
+}
+.buttons-wrapper {
+  height: unset !important;
+}
+.tools-and-extensions {
+  --button-size-icon: var(--pf-toolbarbutton-width);
+}
+@media -moz-pref("sidebar.verticalTabs") {
+  .tools-and-extensions {
+    width: 100%;
+    height: 100% !important;
+    justify-content: space-between !important;
+    box-sizing: border-box;
+    gap: var(--pf-toolbarbutton-gap);
+    padding-inline: var(--pf-browser-separation) !important;
+    padding-bottom: var(--pf-browser-separation) !important;
+  }
+  button {
+    --button-outer-padding-inline: 0;
+    --button-outer-padding-block: 0;
+    --button-outer-padding-block-start: 0;
+    --button-outer-padding-block-end: 0;
+  }
+}
+.actions-list > moz-button {
+  visibility: visible !important;
+}
+/* sidebar buttons animation */
+.button-background[type="icon ghost"] > img {
+  transition: fill var(--pf-ts-25) var(--pf-easing-bounce);
+
+  .button-background:active & {
+    fill: var(--pf-icon-color-active) !important;
+  }
+}
+moz-button[view="viewCustomizeSidebar"] { order: 1; }
+
+/* floating sidebar */
+@media -moz-pref("sidebar.verticalTabs") and -moz-pref("sidebar.visibility", "hide-sidebar") {
+  :root:active-view-transition-type(launcher-hide, launcher-enter) #sidebar-container {
+    background: none !important;
+    transition: unset !important;
+  }
+  #sidebar-container:hover,
+  #sidebar-container:hover ~ #tabbrowser-tabbox {
+    view-transition-name: none !important;
+  }
+  :is(#nav-bar, #sidebar-container) {
+    --pf-fl-sidebar-width: calc((var(--pf-unified-sidebar-width) + var(--pf-separation)) * (1 - var(--pf-fl-hover, 0)));
+    --pf-fl-delay: 35ms;
+  }
+  :root:not([popup-window], [mini-window], [taskbartab]):has(#sidebar-container:not([sidebar-launcher-expanded])) {
+    /* sidebar */
+    #sidebar-container {
+      display: flex !important;
+      overflow: unset !important;
+      position: fixed;
+      top: calc(var(--pf-navbar-height) - var(--pf-separation));
+      bottom: var(--pf-separation);
+      left: var(--pf-separation);
+      z-index: 3;
+      transform: translateX(calc(var(--pf-fl-sidebar-width) * -1));
+      width: var(--pf-unified-sidebar-width);
+      background: var(--pf-sidebar-background-color);
+      border-radius: var(--pf-browser-border-radius);
+      transition: transform var(--pf-ts-fs) var(--pf-easing-sidebar) var(--pf-fl-delay);
+      --pf-fl-sidebar-offset: calc(var(--pf-separation) - var(--tab-margin-block));
+
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        border-radius: inherit;
+        outline: 0.5px solid var(--pf-border-color-light);
+        box-shadow: var(--pf-box-shadow-md);
+        opacity: var(--pf-fl-hover, 0);
+        transition: opacity var(--pf-ts-fs) var(--pf-easing-sidebar) var(--pf-fl-delay);
+      }
+      /* fs: background */
+      @media -moz-pref("parfait.theme.blur.enabled") {
+        backdrop-filter: var(--pf-acrylic-filter);
+        background: var(--pf-sidebar-background-color-alpha);
+
+        @media -moz-pref("parfait.background.accent-color") and -moz-pref("parfait.background.accent-color.gradient") {
+          background: linear-gradient(color-mix(in srgb, var(--pf-accent-color-background-gradient-fade), transparent 20%), color-mix(in srgb, var(--pf-browser-background-color), transparent 20%));
+        }
+      }
+      /* fs: sidebar trigger point */
+      #tabbrowser-tabs[orient="vertical"]::before {
+        content: "";
+        position: absolute;
+        inset-block: calc(var(--pf-fl-sidebar-offset, 0px) * -1) 0;
+        inset-inline: calc(var(--pf-fl-trigger-width) * -1);
+        z-index: -1;
+      }
+    }
+    &:has(#sidebar-container:hover, .tabbrowser-tab[multiselected]:not([selected]), .tab-drop-indicator:not([hidden]), #tabbrowser-tabs[movingtab], #tabs-newtab-button[open], :is(#new-tab-button-popup, #tabContextMenu):hover, :is(#tabNotePanel, .tab-group-editor-panel, :is(#tab-note-preview-panel, #tabgroup-preview-panel)[animate="open"])[panelopen]) :is(#nav-bar, #sidebar-container) {
+      --pf-fl-hover: 1;
+    }
+    /* fs: offset vertical tabs to fix tab dragging */
+    sidebar-main {
+      position: relative;
+      top: var(--pf-fl-sidebar-offset);
+      height: calc(100% - var(--pf-fl-sidebar-offset));
+    }
+    /* fs: separation */
+    &:not([inDOMFullscreen]) #tabbrowser-tabbox:not([sidebar-panel-open]) {
+      margin-inline: calc(var(--pf-browser-padding) * (1 - var(--pf-fl-warning, 0))) var(--pf-browser-padding) !important;
+    }
+    /* fs: sidebar 2 */
+    #sidebar-box {
+      margin-inline-start: var(--pf-browser-padding) !important;
+    }
+    /* fs: display tab contents */
+    #vertical-tabs {
+      width: var(--pf-unified-sidebar-width);
+    }
+    #pinned-tabs-container[orient="vertical"] {
+      margin: calc(var(--tab-margin-block) * -1);
+      padding-inline: calc(var(--pf-separation) - var(--tab-margin-block)) !important;
+      --tab-min-height: var(--pf-tab-pinned-height);
+      --tab-height-with-margin-padding: calc(var(--pf-tab-pinned-height) + (var(--tab-margin-inline-pinned-expanded) * 2));
+
+      .tab-background {
+        --tab-margin-block: var(--tab-margin-inline-pinned-expanded);
+        --tab-margin-inline-inner: var(--tab-margin-inline-pinned-expanded);
+      }
+    }
+    #pinned-drop-indicator[visible] {
+      width: -moz-available !important;
+      height: 70px !important;
+    }
+    #pinned-drop-indicator-text {
+      display: flex !important;
+    }
+    .tab-background {
+      width: unset !important;
+    }
+    .tabbrowser-tab {
+      max-width: unset !important;
+
+      &[pinned] {
+        width: unset !important;
+      }
+      &:not([pinned]) {
+        .tab-label-container {
+          display: flex !important;
+        }
+        .tab-throbber,
+        .tab-icon-pending,
+        &:not([soundplaying], [muted], [activemedia-blocked]) .tab-icon-image {
+          margin-inline-end: var(--tab-icon-margin-inline-end);
+        }
+        .tab-close-button {
+          width: var(--tab-content-button-size) !important;
+          height: var(--tab-content-button-size) !important;
+          margin-inline-end: calc(var(--tab-close-button-padding) / -2) !important;
+          padding: var(--tab-content-button-padding) !important;
+          background: transparent !important;
+          position: unset !important;
+          box-shadow: none !important;
+          outline: none !important;
+          border-radius: var(--pf-border-radius-sm) !important;
+
+          &:hover {
+            background-color: var(--pf-toolbarbutton-background-color-hover) !important;
+          }
+        }
+        .tab-icon-overlay:is([soundplaying], [muted], [activemedia-blocked]) {
+          display: none;
+        }
+        .tab-audio-button:is([soundplaying], [muted], [activemedia-blocked]) {
+          display: flex !important;
+          margin-inline-end: var(--tab-icon-margin-inline-end);
+        }
+        .tab-label-container {
+          contain: unset !important;
+        }
+      }
+    }
+    tab-split-view-wrapper {
+      align-self: unset !important;
+      grid-template-columns: 1fr 1fr !important;
+
+      .tab-content {
+        width: unset !important;
+        padding-inline: var(--pf-tab-icon-margin-inline-end) !important;
+      }
+    }
+    tab-group {
+      --pf-tab-group-indent-1: var(--pf-tab-group-indent);
+      --tab-group-line-thickness: 0;
+    }
+    #tabs-newtab-button,
+    #vertical-tabs-newtab-button {
+      width: 100% !important;
+
+      .toolbarbutton-text { display: flex !important; }
+    }
+    #vertical-tabs-newtab-button {
+      width: auto !important;
+    }
+  }
+  .actions-list[orientation="vertical"] {
+    flex-direction: row !important;
+    align-items: center !important;
+  }
+  /* 154+ floating sidebar note >.< */
+  :root:not([customizing], [popup-window], [mini-window], [taskbartab]):has(#sidebar-container[hidden] > sidebar-main:not([expanded]) #tabbrowser-tabs[closebuttons="activetab"]) {
+    --pf-fl-warning: 1;
+
+    :is(#nav-bar, #sidebar-container) {
+      --pf-fl-hover: 0 !important;
+    }
+    #sidebar-button {
+      position: static !important;
+      transform: none;
+
+      &::before {
+        content: "";
+        position: fixed;
+        position-anchor: --pf-warning;
+        left: anchor(left);
+        right: anchor(right);
+        top: anchor(top);
+        bottom: anchor(bottom);
+      }
+    }
+    #browser::before {
+      content: var(--pf-icon-miitan) "\A Please click the sidebar button, or press Ctrl+Alt+Z / ^Z to load the sidebar.\A\A Firefox 154+ does not load the sidebar on startup and new windows.";
+      white-space: pre-line;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: var(--pf-unified-sidebar-width);
+      padding-inline: calc(var(--pf-separation) * 2);
+      box-sizing: border-box;
+      anchor-name: --pf-warning;
+      color: color-mix(in srgb, currentColor, transparent);
+      fill: currentColor;
+      -moz-context-properties: fill;
+    }
+  }
+}
+/* floating unified sidebar */
+@media -moz-pref("parfait.layout.unified-sidebar") and -moz-pref("sidebar.verticalTabs") and -moz-pref("sidebar.visibility", "hide-sidebar") {
+  :root:not([customizing], [popup-window], [mini-window], [taskbartab]):has(#sidebar-container:not([sidebar-launcher-expanded])) {
+    /* fus: sidebar */
+    #sidebar-container {
+      top: var(--pf-separation);
+      --pf-fl-sidebar-offset: calc(var(--pf-navbar-height) + var(--pf-sidebar-margin));
+    }
+    &:active-view-transition-type(launcher-hide) #sidebar-container {
+      top: calc(var(--pf-navbar-height) + var(--pf-sidebar-margin));
+      bottom: 0;
+      --pf-fl-sidebar-offset: 0px;
+    }
+    /* fus: traffic lights */
+    @container not style(--pf-fl-warning: 1) {
+      @media -moz-pref("parfait.traffic-lights.enabled") or (-moz-platform: macos) {
+        #nav-bar > .titlebar-buttonbox-container {
+          position: fixed;
+          top: var(--pf-separation);
+          left: var(--pf-separation);
+          transform: translateX(calc(var(--pf-fl-sidebar-width) * -1));
+          z-index: 4;
+          transition: transform var(--pf-ts-fs) var(--pf-easing-sidebar) var(--pf-fl-delay) !important;
+        }
+        &:has(#nav-bar > .titlebar-buttonbox-container:hover) :is(#nav-bar, #sidebar-container) { --pf-fl-hover: 1; }
+      }
+      @media (-moz-platform: macos) {
+        /* hide native csd */
+        .titlebar-buttonbox {
+          appearance: none !important;
+        }
+        .titlebar-button {
+          display: flex !important;
+          appearance: none !important;
+        }
+        &[sizemode="normal"] .titlebar-restore,
+        &[sizemode="maximized"] .titlebar-max {
+          display: none !important;
+        }
+      }
+      #vertical-spacer::before {
+        visibility: hidden;
+      }
+    }
+    /* fus: move toolbar items */
+    #sidebar-button,
+    #back-button,
+    #forward-button,
+    #stop-reload-button {
+      position: fixed;
+      top: calc(var(--pf-separation) + var(--pf-navbar-padding-block));
+      z-index: 4;
+      transform: translateX(calc(var(--pf-fl-sidebar-width) * -1));
+      transition: transform var(--pf-ts-fs) var(--pf-easing-sidebar) var(--pf-fl-delay);
+    }
+    #sidebar-button {
+      left: calc(var(--pf-tl-container-width) + var(--pf-navbar-padding-left) + var(--pf-separation));
+    }
+    #back-button {
+      left: calc(var(--pf-unified-sidebar-width) - (var(--pf-toolbarbutton-width) * 3) - (var(--pf-toolbarbutton-gap) * 2));
+    }
+    #forward-button {
+      left: calc(var(--pf-unified-sidebar-width) - (var(--pf-toolbarbutton-width) * 2) - var(--pf-toolbarbutton-gap));
+    }
+    #stop-reload-button {
+      left: calc(var(--pf-unified-sidebar-width) - var(--pf-toolbarbutton-width));
+    }
+    /* modern problems require modern solutions */
+    #urlbar:not([popover-open]),
+    #urlbar-container::before {
+      transition: transform calc(var(--pf-ts-fs) * var(--pf-fl-ub)) var(--pf-easing-sidebar) calc(var(--pf-fl-delay) * var(--pf-fl-ub));
+      animation: pf-urlbar-skip 0.001s step-end forwards;
+    }
+    #urlbar:not([popover-open]),
+    #urlbar-container::before {
+      transform: translateX(calc(var(--pf-fl-sidebar-width) * -1));
+      z-index: 4;
+      --pf-urlbar-x: calc(var(--pf-separation) * 2);
+      --pf-urlbar-y: calc(var(--pf-navbar-height) + var(--pf-separation));
+    }
+    /* fus: hover state */
+    &:has(:is(#sidebar-button, #back-button, #forward-button, #stop-reload-button, #backForwardMenu, #split-view-menu):hover, :is(#back-button, #forward-button)[open],
+    #urlbar:not([popover-open]) :is(:hover, :is(#trust-icon-container, #notification-popup-box, .identity-box-button, .urlbar-page-action, .searchmode-switcher)[open]),
+    #urlbar[noresults][usertyping]:not([open])) :is(#nav-bar, #sidebar-container) {
+      --pf-fl-hover: 1;
+    }
+    /* reason for #urlbar[noresults][usertyping]:not([open]) hack
+    inconsistent urlbar state when switching to @tabs/@history/@bookmarks/@actions search so show the sidebar instead ^^' */
+  }
+}
+@property --pf-fl-ub {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+@keyframes pf-urlbar-skip {
+  to { --pf-fl-ub: 1; }
+}

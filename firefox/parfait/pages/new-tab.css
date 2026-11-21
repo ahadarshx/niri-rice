@@ -1,0 +1,510 @@
+/*
+  Parfait Pages - new-tab.css
+  https://github.com/reizumii/parfait
+*/
+
+@-moz-document url(about:newtab), url(about:home) {
+  :root {
+    --pf-accent-color: #b8e;
+    --pf-border-color: light-dark(rgba(21, 21, 21, 0.15), rgba(255, 255, 255, 0.125));
+    --pf-border-color-alt: light-dark(rgba(21, 21, 21, 0.075), rgba(255, 255, 255, 0.075));
+    --pf-background-blur: blur(64px);
+    --pf-ts-25: 0.25s;
+    --pf-fx-bounce: cubic-bezier(0.125, 1.125, 0.25, 1.0125);
+
+    --pf-element-background-color: light-dark(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.1));
+    --pf-element-shadow: 0 0 0 1px light-dark(rgba(0, 0, 0, 0.06), rgba(255, 255, 255, 0.125)), 0 2px 6px rgba(0, 0, 0, 0.04);
+    --pf-element-filter: none;
+
+    --newtab-background-card: light-dark(rgba(255, 255, 255, 0.4), rgba(21, 21, 21, 0.375)) !important;
+    --newtab-background-color-secondary: light-dark(rgba(255, 255, 255, 0.75), rgba(21, 21, 21, 0.625)) !important;
+    --newtab-overlay-color: rgba(21, 21, 21, 0.5) !important;
+    --color-accent-primary: var(--pf-accent-color) !important;
+    --color-accent-primary-hover: color-mix(in srgb, var(--pf-accent-color), #000 10%) !important;
+    --color-accent-primary-active: color-mix(in srgb, var(--pf-accent-color), #000 20%) !important;
+    --border-color: var(--pf-border-color) !important;
+    --border-color-interactive: var(--pf-border-color) !important;
+    --border-radius-small: 8px !important;
+    --border-radius-medium: 12px !important;
+
+    --button-background-color: light-dark(rgba(21, 21, 21, 0.125), rgba(255, 255, 255, 0.125)) !important;
+    --button-background-color-hover: light-dark(rgba(21, 21, 21, 0.175), rgba(255, 255, 255, 0.175)) !important;
+    --button-background-color-active: light-dark(rgba(21, 21, 21, 0.2), rgba(255, 255, 255, 0.2)) !important;
+    --button-background-color-menu-active: light-dark(rgba(21, 21, 21, 0.2), rgba(255, 255, 255, 0.2)) !important;
+    --button-font-size: 14px !important;
+    --button-font-weight: 500 !important;
+    --button-border: none !important;
+    --button-border-radius: calc(var(--border-radius-small) - 2px) !important;
+
+    &:not([style^="--newtab-background-color:"]) {
+      --newtab-background-color: light-dark(#f8f8f8, #161616) !important;
+    }
+    @media (prefers-reduced-motion: reduce) { --pf-ts-25: 0s; }
+  }
+  @media (-moz-platform: windows) {
+    body,
+    .search-handoff-button {
+      font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif !important;
+    }
+  }
+  @media -moz-pref("parfait.new-tab.background.pattern") {
+    body {
+      background-size: unset !important;
+      background-repeat: repeat !important;
+    }
+  }
+  @media -moz-pref("browser.tabs.allow_transparent_browser") {
+    :root:not(.lightWallpaper, .darkWallpaper) > body {
+      background-color: revert !important;
+      --newtab-background-color-secondary: light-dark(var(--color-white), var(--color-gray-70)) !important;
+    }
+  }
+  /* as shrimple as that */
+  :root:is(.lightWallpaper, .darkWallpaper):not([style~="url();"]) {
+    --pf-element-background-color: light-dark(rgba(255, 255, 255, 0.375), rgba(96, 96, 96, 0.325));
+    --pf-element-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.125), inset 0 -1px 0 rgba(34, 34, 34, 0.075), inset 0 0 0 1px rgba(255, 255, 255, 0.0625), 0 2px 6px rgba(0, 0, 0, 0.04);
+    --pf-element-filter: blur(12px) brightness(var(--pf-ef-brg, 1.06)) saturate(var(--pf-ef-sat, 1.05));
+  }
+  :root.lightWallpaper {
+    color-scheme: light !important;
+  }
+  :root.darkWallpaper {
+    color-scheme: dark !important;
+    --pf-ef-brg: 0.84;
+    --pf-ef-sat: 0.92;
+  }
+  /* search box */
+  .search-wrapper .search-inner-wrapper {
+    height: 56px !important;
+  }
+  .search-handoff-button {
+    background-color: var(--pf-element-background-color) !important;
+    background-size: 20px !important;
+    border: none !important;
+    font-weight: var(--font-weight);
+    box-shadow: var(--pf-element-shadow) !important;
+    backdrop-filter: var(--pf-element-filter);
+    fill-opacity: 0.5;
+    -moz-context-properties: fill, fill-opacity !important;
+    --content-search-handoff-ui-engine-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='context-fill' fill-opacity='context-fill-opacity' viewBox='0 0 16 16'%3E%3Cpath d='M7.625 2a5.5 5.5 0 0 1 4.382 8.821l1.648 1.649a.75.75 0 1 1-1.06 1.06l-1.649-1.648A5.5 5.5 0 1 1 7.625 2m0 1.5a4 4 0 1 0 0 8 4 4 0 0 0 0-8'/%3E%3C/svg%3E") !important;
+  }
+  .stuck-search::before {
+    content: none !important;
+  }
+  .fake-textbox {
+    font-size: 18px !important;
+    font-weight: 600;
+    opacity: 0.4 !important;
+  }
+  .fake-caret {
+    background: var(--pf-accent-color) !important;
+    width: 2px !important;
+    translate: 2px -3px;
+  }
+  /* logo */
+  @media not -moz-pref("parfait.new-tab.logo", "firefox") {
+    .wordmark {
+      display: inline-block !important;
+      width: calc(var(--pf-logo-width) - (var(--pf-logo-width) / 3)) !important;
+      height: calc(var(--pf-logo-height) - (var(--pf-logo-height) / 3)) !important;
+      margin-inline: auto !important;
+      background-size: 100% !important;
+      background-position: center;
+      fill: var(--newtab-text-primary-color) !important;
+
+      @media -moz-pref("parfait.new-tab.logo", "firefox-logo-mono") {
+        background-image: url("chrome://browser/skin/sidebar/firefox.svg") !important;
+        opacity: 0.5;
+        --pf-logo-width: 84px;
+        --pf-logo-height:84px;
+      }
+      @media -moz-pref("parfait.new-tab.logo", "parfait") {
+        background-image: url("../assets/logo/logo.png") !important;
+        --pf-logo-width: 300px;
+        --pf-logo-height: 127px;
+      }
+      @media -moz-pref("parfait.new-tab.logo", "parfait-uwu") {
+        background-image: url("../assets/logo/logo-uwu.png") !important;
+        --pf-logo-width: 296px;
+        --pf-logo-height: 127px;
+      }
+      @media -moz-pref("parfait.new-tab.logo", "parfait-mono") {
+        background-image: url("../assets/logo/logo-mono.svg") !important;
+        --pf-logo-width: 240px;
+        --pf-logo-height: 59px;
+      }
+    }
+    .logo-in-content .wordmark {
+      width: var(--pf-logo-width) !important;
+      height: var(--pf-logo-height) !important;
+      margin-block-start: var(--space-xxlarge) !important;
+    }
+    .logo-and-wordmark > svg,
+    .logo {
+      display: none !important;
+    }
+  }
+  /* tiles */
+  .top-sites-list {
+    column-gap: 24px !important;
+    row-gap: 16px !important;
+  }
+  .top-site-outer .tile {
+    width: 72px !important;
+    height: 72px !important;
+    background-color: var(--pf-element-background-color) !important;
+    box-shadow: none !important;
+    backdrop-filter: var(--pf-element-filter);
+    border: none !important;
+    border-radius: var(--border-radius-medium) !important;
+    color-scheme: revert !important;
+
+    .icon-wrapper {
+      border-radius: calc(var(--border-radius-medium) / 2) !important;
+    }
+    .top-site-icon {
+      border-radius: 0 !important;
+    }
+  }
+  .top-site-outer .tile:hover {
+    outline: 4px solid var(--pf-border-color) !important;
+    transition: transform var(--pf-ts-25) !important;
+  }
+  .top-site-button:hover:active .tile {
+    transform: scale(0.95) !important;
+  }
+  .top-site-outer .tile::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: var(--border-radius-medium);
+    box-shadow: var(--pf-element-shadow);
+  }
+  .top-site-outer .tile .icon-wrapper.letter-fallback {
+    background-color: transparent !important;
+  }
+  .top-site-outer .icon-pin-small {
+    visibility: hidden;
+  }
+  .top-site-outer .context-menu-button {
+    top: -4px !important;
+    right: -4px !important;
+    background-color: var(--pf-element-background-color) !important;
+    box-shadow: var(--pf-element-shadow) !important;
+    backdrop-filter: var(--pf-element-filter);
+    border: none !important;
+    color-scheme: revert !important;
+  }
+  /* context menu */
+  .context-menu {
+    padding: 4px;
+    backdrop-filter: var(--pf-background-blur);
+    box-shadow: var(--pf-element-shadow) !important;
+    color-scheme: revert !important;
+  }
+  .context-menu > ul {
+    padding: 0 !important;
+  }
+  .context-menu > ul > li {
+    font-size: 14px !important;
+  }
+  .context-menu > ul > li > a,
+  .context-menu > ul > li > button {
+    border-radius: 4px !important;
+  }
+  .context-menu > ul > li.separator {
+    width: calc(100% - 20px) !important;
+    margin-inline: 10px !important;
+  }
+  /* customize new tab */
+  .button-background:has(img[src="chrome://global/skin/icons/edit-outline.svg"]) {
+    background-color: var(--pf-element-background-color) !important;
+    padding: 0.5rem !important;
+    border-radius: var(--border-radius-circle) !important;
+    box-shadow: var(--pf-element-shadow) !important;
+    backdrop-filter: var(--pf-element-filter);
+    transition: scale var(--pf-ts-25) var(--pf-fx-bounce) !important;
+    --button-icon-fill: var(--newtab-text-primary-color);
+    --button-border: none;
+
+    &:hover {
+      scale: 1.1;
+    }
+    &  > label { display: none; }
+  }
+  .customize-menu {
+    width: 450px !important;
+    height: fit-content !important;
+    min-height: unset !important;
+    inset-block: auto 20px !important;
+    inset-inline: auto 20px !important;
+    padding-block-end: 0 !important;
+    border-radius: var(--border-radius-medium) !important;
+    box-shadow: var(--pf-element-shadow) !important;
+    background: var(--newtab-background-color-secondary) !important;
+    backdrop-filter: var(--pf-background-blur);
+    transition: transform var(--pf-ts-25);
+    transition-timing-function: var(--pf-fx-bounce) !important;
+    transform: scale(0) !important;
+    transform-origin: bottom right;
+  }
+  .customize-menu:is(.customize-animate-enter-active, .customize-animate-enter-done),
+  .customize-menu-animate-wrapper:is(.customize-animate-enter-active, .customize-animate-enter-done) {
+    transform: scale(1) !important;
+  }
+  .home-section {
+    height: 100%;
+    padding: 20px !important;
+    grid-row-gap: 20px !important;
+  }
+  .home-section .divider {
+    margin-inline: -20px !important;
+    --border-color: var(--pf-border-color-alt);
+  }
+  .close-button-wrapper {
+    display: none;
+  }
+  .button-background:has(img[src="chrome://global/skin/icons/shaft-arrow-left.svg"]) {
+    background-color: transparent !important;
+    gap: 1rem !important;
+    --button-padding: 0;
+
+    & > img {
+      background-color: var(--button-background-color-ghost);
+      border-radius: var(--border-radius-circle);
+      padding: 0.5rem;
+    }
+    & > label {
+      font-size: 20px;
+      font-weight: 600;
+    }
+  }
+  /* cnt: sections */
+  #wallpapers-section,
+  #shortcuts-section,
+  #widgets-section {
+    margin-block: 0 !important;
+  }
+  .appearance-section {
+    display: none !important;
+  }
+  .customize-menu-content {
+    padding-block-end: 20px;
+    overflow-x: visible !important;
+    overflow-y: clip !important;
+    transition: transform var(--pf-ts-25);
+  }
+  .customize-menu-content.subpanel-open {
+    transform: translateX(-450px);
+  }
+  .category.wallpaper-list,
+  .widgets-mgmt-panel {
+    background-color: transparent !important;
+    transform: translateX(450px) !important;
+    transition: transform var(--pf-ts-25);
+  }
+  .customize-menu-content.subpanel-open .category.wallpaper-list,
+  .customize-menu-content.subpanel-open .widgets-mgmt-panel {
+    transform: translateX(450px) !important;
+  }
+  /* cnt: wallpapers */
+  .wallpapers-section .category-list,
+  .wallpaper-list.category fieldset {
+    padding: 0 !important;
+    gap: 10px !important;
+    grid-auto-rows: 100px !important;
+    margin-block-end: 0 !important;
+  }
+  .category-list > div {
+    position: relative;
+    height: 100px;
+  }
+  .wallpaper-list.category .wallpaper-grid {
+    row-gap: var(--space-medium) !important;
+  }
+  .wallpaper-grid-row {
+    grid-auto-rows: 100px !important;
+
+    .wallpaper-list.category .wallpaper-grid & {
+      column-gap: var(--space-medium) !important;
+    }
+    & > div {
+      position: relative;
+    }
+  }
+  .wallpaper-input {
+    height: 100px !important;
+    box-shadow: inset 0 0 0 1px var(--pf-border-color) !important;
+    transition: filter var(--pf-ts-25);
+
+    &.selected {
+      box-shadow: none !important;
+      outline: 2px solid var(--pf-accent-color) !important;
+    }
+    & + label {
+      position: absolute;
+      left: 12px;
+      bottom: 10px;
+      font-weight: 600;
+      text-align: left !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+      color: #fff;
+      pointer-events: none;
+    }
+    &.theme-custom-wallpaper {
+      border: none !important;
+
+      &::after { opacity: 0.5; }
+      & + label { display: none !important; }
+    }
+  }
+  .theme-custom-color-picker {
+    box-shadow: inset 0 0 0 1px var(--pf-border-color) !important;
+    background-color: transparent !important;
+    outline: none !important;
+
+    &::after { color-scheme: revert !important; }
+    & > label { display: none !important }
+  }
+  .wallpaper-list.category {
+    padding: 20px !important;
+  }
+  .wallpapers-arrow-button {
+    margin-block-end: 16px !important;
+    --button-border-radius: var(--border-radius-circle);
+  }
+  .category-list .wallpaper-input.your-images-folder.selected::after {
+    box-shadow: none !important;
+  }
+  .wallpaper-list.category fieldset.your-images .your-images-preview,
+  .category-list .wallpaper-input.your-images-folder .your-images-preview {
+    border-radius: var(--border-radius-small) !important;
+  }
+  .wallpaper-list.category fieldset.your-images .your-images-preview {
+    block-size: 100px !important;
+  }
+  /* cnt: widgets */
+  #widgets-management-panel > moz-box-button {
+    border: none !important;
+    font-size: 14px;
+    --box-padding: 12px 16px !important;
+    --box-border-radius-inner: 8px !important;
+  }
+  .nav-icon {
+    content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='context-fill' fill-opacity='context-fill-opacity' viewBox='0 0 12 12'%3E%3Cpath d='M4.12 2a.63.63 0 0 1 .439.172l3.463 3.466v.705L4.557 9.809a.626.626 0 0 1-.884-.887l2.934-2.934-2.933-2.93A.627.627 0 0 1 4.119 2'/%3E%3C/svg%3E");
+    --icon-size: 12px;
+  }
+  /* cnt: more settings */
+  .customize-menu-content .manage-settings-footer {
+    padding: 8px !important;
+    border-top: 1px solid var(--pf-border-color-alt);
+    background: none !important;
+
+    &::before { content: none !important; }
+  }
+  #settings-link {
+    width: 100%;
+    padding: 12px 40px !important;
+    text-decoration: none !important;
+    text-align: left;
+    background-position: 12px 13px !important;
+    --link-color: color-mix(in srgb, currentColor, transparent 30%);
+    --link-color-hover: color-mix(in srgb, currentColor, transparent 20%);
+
+    &:hover {
+      background-color: color-mix(in srgb, currentColor, transparent 90%) !important;
+    }
+  }
+  /* toggles */
+  .toggle-button {
+    --toggle-width: 36px;
+    --toggle-height: 20px;
+    --toggle-background-color: light-dark(rgba(0, 0, 0, 0.04), rgba(255, 255, 255, 0.04));
+    --toggle-background-color-hover: light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.08));
+    --toggle-background-color-active: light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.08));
+    --toggle-border-color: light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.15));
+    --toggle-border-color-hover: light-dark(rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0.2));
+    --toggle-border-color-active: light-dark(rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0.2));
+
+    /* dot */
+    --toggle-dot-width: 12px;
+    --toggle-dot-height: 12px;
+    --toggle-dot-margin: 3px;
+  }
+  .settings-toggles moz-toggle {
+    --input-space-offset: calc(var(--toggle-width) + 12px) !important;
+  }
+  .toggle-button + .text-container {
+    margin-inline-start: 6px;
+  }
+  /* selectors */
+  .select-wrapper > select {
+    color-scheme: light dark;
+  }
+  .select-chevron-icon {
+    content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='context-fill' fill-opacity='context-fill-opacity' viewBox='0 0 16 16'%3E%3Cpath d='M7.648 10.53 4.174 7.057a.626.626 0 0 1 .886-.884l2.942 2.943 2.941-2.944a.626.626 0 0 1 .885.885l-3.475 3.474z'/%3E%3C/svg%3E");
+  }
+  /* edit shortcut */
+  .edit-topsites-wrapper .modal {
+    width: fit-content !important;
+  }
+  .edit-topsites-wrapper dialog {
+    transform-origin: top center;
+    transition: scale var(--pf-ts-25), opacity var(--pf-ts-25);
+
+    @starting-style {
+      scale: 0.875;
+      opacity: 0;
+    }
+  }
+  .topsite-form .form-input-container {
+    max-width: 600px !important;
+  }
+  .topsite-form .form-wrapper {
+    min-width: 260px;
+  }
+  .topsite-form label {
+    --font-size-large: 14px;
+  }
+  .topsite-form span {
+    font-size: 12px !important;
+    font-weight: 600;
+    opacity: 0.5;
+  }
+  .topsite-form .form-wrapper input[type="text"] {
+    height: 36px !important;
+  }
+  .topsite-form .top-site-outer {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    min-width: 220px;
+    margin-block-start: 0 !important;
+    border: 1px solid var(--pf-border-color);
+    color-scheme: revert !important;
+  }
+  .fields-and-preview .top-site-outer .top-site-button {
+    text-decoration: none !important;
+    color-scheme: revert;
+  }
+  /* widgets */
+  .widgets-expand-button {
+    --button-border-radius: var(--border-radius-circle);
+  }
+  .widget-wrapper > article,
+  .weather-widget.small-widget {
+    border: none !important;
+    box-shadow: var(--pf-element-shadow) !important;
+    backdrop-filter: var(--pf-element-filter);
+    transition: background-color var(--pf-ts-25) !important;
+  }
+  .weather-widget.small-widget {
+    right: 12px;
+  }
+  .clocks-widget .clocks-row-action-button {
+    --border-width: 0;
+  }
+  .lists .lists-add-button {
+    border-radius: var(--button-border-radius) !important;
+  }
+}

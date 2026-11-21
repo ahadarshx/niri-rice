@@ -1,0 +1,103 @@
+/* DMS colours, shapes and motion on top of Parfait. Edit this file, not parfait/. */
+
+/* ---------- colours: Material You tokens from the wallpaper ---------- */
+:root {
+  --pf-accent-color: var(--md-sys-color-primary) !important;
+  --pf-accent-text-color: var(--md-sys-color-primary) !important;
+  --pf-text-color: var(--md-sys-color-on-surface) !important;
+  --pf-text-color-inactive: var(--md-sys-color-on-surface-variant) !important;
+  --pf-icon-color: var(--md-sys-color-on-surface-variant) !important;
+  --pf-icon-color-active: var(--md-sys-color-on-surface) !important;
+  --pf-sidebar-background-color: var(--md-sys-color-surface-container-low) !important;
+  --pf-panel-background-color: var(--md-sys-color-surface-container) !important;
+  --pf-panel-background-color-alpha: color-mix(in srgb, var(--md-sys-color-surface-container) 88%, transparent) !important;
+  --pf-urlbar-open-background-color: var(--md-sys-color-surface-container-high) !important;
+  --pf-tab-selected-background-color: var(--md-sys-color-secondary-container) !important;
+  --pf-tab-selected-box-shadow: none !important;
+  --pf-toolbarbutton-background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 7%, transparent) !important;
+  --pf-toolbarbutton-background-color-hover: color-mix(in srgb, var(--md-sys-color-on-surface) 10%, transparent) !important;
+  --pf-toolbarbutton-background-color-active: color-mix(in srgb, var(--md-sys-color-on-surface) 14%, transparent) !important;
+  --pf-toolbarbutton-background-color-inactive: color-mix(in srgb, var(--md-sys-color-on-surface) 5%, transparent) !important;
+  --pf-favicon-background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent) !important;
+  --pf-border-color: var(--md-sys-color-outline-variant) !important;
+  --pf-border-color-light: color-mix(in srgb, var(--md-sys-color-outline-variant) 60%, transparent) !important;
+
+  /* Material shapes: a little rounder than Parfait's defaults */
+  --pf-border-radius-md: 14px !important;
+  --pf-border-radius-hl: 10px !important;
+  --pf-urlbar-open-border-radius: 22px !important;
+  --pf-window-border-radius: 14px !important;
+
+  /* Firefox's own toolbar, tab and panel colours */
+  --toolbar-color: var(--md-sys-color-on-surface) !important;
+  --toolbar-text-color: var(--md-sys-color-on-surface) !important;
+  --toolbarbutton-icon-fill: var(--md-sys-color-on-surface-variant) !important;
+  --tab-selected-textcolor: var(--md-sys-color-on-secondary-container) !important;
+  --toolbar-field-color: var(--md-sys-color-on-surface) !important;
+  --toolbar-field-focus-color: var(--md-sys-color-on-surface) !important;
+  --urlbarView-highlight-background: var(--md-sys-color-secondary-container) !important;
+  --urlbarView-highlight-color: var(--md-sys-color-on-secondary-container) !important;
+  --urlbarView-hover-background: color-mix(in srgb, var(--md-sys-color-on-surface) 7%, transparent) !important;
+  --arrowpanel-background: var(--md-sys-color-surface-container) !important;
+  --arrowpanel-color: var(--md-sys-color-on-surface) !important;
+  --arrowpanel-border-color: var(--md-sys-color-outline-variant) !important;
+  --panel-separator-color: var(--md-sys-color-outline-variant) !important;
+  --focus-outline-color: var(--md-sys-color-primary) !important;
+  --chrome-content-separator-color: transparent !important;
+  --button-primary-bgcolor: var(--md-sys-color-primary) !important;
+  --button-primary-color: var(--md-sys-color-on-primary) !important;
+}
+:root:not([lwtheme]) {
+  --toolbox-background-color: var(--md-sys-color-surface-container-low) !important;
+  --toolbox-background-color-inactive: var(--md-sys-color-surface-container-low) !important;
+}
+menupopup, panel {
+  --panel-background: var(--md-sys-color-surface-container) !important;
+  --panel-color: var(--md-sys-color-on-surface) !important;
+  --panel-border-color: var(--md-sys-color-outline-variant) !important;
+}
+menupopup > menuitem, menupopup > menu { border-radius: 8px !important; }
+
+/* No window buttons, like the rest of the niri setup (close with Super+Q). */
+.titlebar-buttonbox-container, .titlebar-buttonbox, .titlebar-spacer { display: none !important; }
+
+/* ---------- Safari Golden Gate touches ---------- */
+/* Quiet address bar: the URL rests at lower contrast and wakes up on hover or focus. */
+#urlbar:not([focused], [popover-open], :hover) .urlbar-input-box { opacity: 0.72; }
+#urlbar .urlbar-input-box { transition: opacity 180ms ease; }
+/* Selected tab reads as a soft tonal pill, title in the accent ink. */
+.tabbrowser-tab[selected] .tab-label { color: var(--md-sys-color-on-secondary-container) !important; font-weight: 600 !important; }
+
+/* ---------- popup search: dim the page behind it ---------- */
+#tabbrowser-tabbox { transition: filter 220ms ease; }
+:root:has(#urlbar[popover-open]) #tabbrowser-tabbox { filter: brightness(0.62) saturate(0.85); }
+
+/* ---------- subtle motion (off when the system asks for reduced motion) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  /* the floating search card eases in */
+  #urlbar[popover-open] { animation: dms-pop-in 200ms cubic-bezier(0.2, 0.9, 0.3, 1.1); }
+  #urlbar[popover-open] .urlbarView { animation: dms-fade-up 220ms 40ms ease-out both; }
+
+  /* new tabs slide in, buttons and tabs fade their hover colour */
+  .tabbrowser-tab[fadein]:not([pinned]) .tab-content { animation: dms-tab-in 240ms ease-out; }
+  .tab-background, toolbarbutton .toolbarbutton-icon, toolbarbutton .toolbarbutton-badge-stack,
+  .urlbar-background, .urlbarView-row {
+    transition: background-color 160ms ease, box-shadow 160ms ease, scale 120ms ease !important;
+  }
+  /* buttons give a tiny press */
+  toolbarbutton:active:not([disabled]) :is(.toolbarbutton-icon, .toolbarbutton-badge-stack) { scale: 0.92; }
+  /* results lift slightly on hover */
+  .urlbarView-row:hover { translate: 2px 0; transition: translate 140ms ease; }
+}
+@keyframes dms-pop-in {
+  from { opacity: 0; scale: 0.97; translate: 0 -6px; }
+  to   { opacity: 1; scale: 1; translate: 0 0; }
+}
+@keyframes dms-fade-up {
+  from { opacity: 0; translate: 0 6px; }
+  to   { opacity: 1; translate: 0 0; }
+}
+@keyframes dms-tab-in {
+  from { opacity: 0; translate: 0 4px; }
+  to   { opacity: 1; translate: 0 0; }
+}
