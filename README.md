@@ -31,7 +31,7 @@ Copy each folder to `~/.config/<name>/` (`bin/` to `~/.local/bin/`), then in DMS
 
 ## Firefox
 
-One row of tabs, a search bar that pops out in the middle, a redesigned settings page and a glass home page, all in the wallpaper colours. Built on [Parfait](https://github.com/reizumii/parfait), with the home page from [Safari Golden Gate](https://github.com/carlosjrrr/Safari-Golden-Gate).
+One row of tabs, a search bar that pops out in the middle, a redesigned settings page and a glass home page, all in the wallpaper colours.
 
 1. DMS writes the wallpaper colours to `~/.config/dms/firefox.css`. If it is missing, turn on Firefox in the DMS theme settings.
 2. Open `about:support`, copy the **Profile Folder** path, then:
