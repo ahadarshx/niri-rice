@@ -12,6 +12,8 @@
 
 ![music](screenshots/music.jpg)
 
+![firefox](screenshots/firefox.jpg)
+
 </div>
 
 ## What's in it
